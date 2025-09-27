@@ -45,13 +45,7 @@ Find your Sleeper League ID in your league URL:
 ## Installation
 
 ### As a Web App
-1. Visit the hosted GitHub Pages URL
+1. Visit the hosted URL
 2. On mobile: Use "Add to Home Screen" option
 3. On desktop: Look for install prompt in address bar
 
-### Local Development
-```bash
-git clone https://github.com/yourusername/sleeper-idp-analyzer.git
-cd sleeper-idp-analyzer
-# Open index.html in browser or serve with local server
-python -m http.server 8000  # Example with Python
