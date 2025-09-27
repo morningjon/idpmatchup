@@ -2,11 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sleeper Defensive Matchup Analyzer - All 32 Teams</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="IDP Analyzer">
+    <meta name="msapplication-TileColor" content="#2c3e50">
+    <meta name="description" content="Analyze NFL defensive player matchups and get waiver wire recommendations for fantasy football IDP leagues">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 10vh; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); overflow: hidden; }
         .header { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; padding: 30px; text-align: center; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
@@ -14,8 +30,11 @@
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .input-group label { font-weight: 600; color: #2c3e50; }
         .input-group input, .input-group select { padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; min-width: 200px; }
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #3498db, #2980b9); color: white; transition: all 0.3s ease; }
+        .btn:hover { background: linear-gradient(135deg, #2980b9, #3498db); transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn.waiver { background: linear-gradient(135deg, #27ae60, #2ecc71); margin-top: 10px; }
+        .btn.waiver:hover { background: linear-gradient(135deg, #2ecc71, #27ae60); }
         .position-tabs { display: flex; background: #e9ecef; margin: 0 30px; border-radius: 8px; overflow: hidden; }
         .position-tab { flex: 1; padding: 15px 20px; background: #e9ecef; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; color: #6c757d; }
         .position-tab.active { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
@@ -43,11 +62,20 @@
         .legend { display: flex; gap: 20px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 500; }
         .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid #ccc; }
-        .debug-info { margin: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db; font-size: 0.9rem; color: #495057; max-height: 300px; overflow-y: auto; }
+        .waiver-section { margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #f8f9fa, #ffffff); border-radius: 12px; border: 2px solid #e9ecef; }
+        .waiver-header { text-align: center; margin-bottom: 20px; }
+        .waiver-header h2 { color: #2c3e50; font-size: 1.8rem; margin-bottom: 10px; }
+        .waiver-recommendations { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .waiver-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-left: 4px solid #27ae60; }
+        .waiver-card h3 { color: #2c3e50; font-size: 1.2rem; margin-bottom: 10px; }
+        .waiver-card .player-name { font-size: 1.1rem; font-weight: 600; color: #27ae60; margin-bottom: 5px; }
+        .waiver-card .matchup { color: #6c757d; margin-bottom: 5px; }
+        .waiver-card .points { color: #2c3e50; font-weight: 600; }
         @media (max-width: 768px) {
             .controls { flex-direction: column; align-items: stretch; }
             .position-tabs { margin: 0 15px; }
             .results-section { padding: 20px 15px; }
+            .waiver-recommendations { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -94,7 +122,10 @@
                     <option value="18">Week 18</option>
                 </select>
             </div>
-            <button id="analyzeBtn" class="btn">Analyze All 32 Teams</button>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="analyzeBtn" class="btn">Analyze All 32 Teams</button>
+                <button id="waiverBtn" class="btn waiver" style="display: none;">Get Waiver Recommendations</button>
+            </div>
         </div>
 
         <div class="position-tabs" style="display: none;" id="positionTabs">
@@ -150,7 +181,14 @@
                 </table>
             </div>
 
-            <div class="debug-info" id="debugInfo"></div>
+            <div id="waiverSection" class="waiver-section" style="display: none;">
+                <div class="waiver-header">
+                    <h2>Waiver Wire Recommendations</h2>
+                    <p>Top available players with favorable matchups for next week</p>
+                </div>
+                <div id="waiverRecommendations" class="waiver-recommendations">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -160,7 +198,8 @@
                 this.players = {};
                 this.scoringSettings = null;
                 this.nflSchedule = {};
-                this.debugLog = [];
+                this.leagueRosters = [];
+                this.playerStats = {};
                 this.setupEventListeners();
 
                 this.results = {
@@ -202,6 +241,10 @@
                     }
                     this.analyzeDefensiveMatchups();
                 });
+
+                document.getElementById('waiverBtn').addEventListener('click', () => {
+                    this.getWaiverRecommendations();
+                });
             }
 
             showStatus(message, type = 'loading') {
@@ -210,20 +253,10 @@
                 statusEl.className = `status ${type}`;
             }
 
-            log(message) {
-                console.log(message);
-                this.debugLog.push(message);
-            }
-
-            updateDebugDisplay() {
-                const debugEl = document.getElementById('debugInfo');
-                debugEl.innerHTML = this.debugLog.slice(-100).join('<br>'); 
-            }
-
             async fetchData(url) {
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${url}`);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 return await response.json();
             }
@@ -232,39 +265,35 @@
                 try {
                     const analyzeBtn = document.getElementById('analyzeBtn');
                     analyzeBtn.disabled = true;
-                    this.debugLog = [];
 
                     const leagueId = document.getElementById('leagueId').value.trim();
                     const season = document.getElementById('season').value;
                     const maxWeek = parseInt(document.getElementById('maxWeek').value);
 
-                    this.showStatus('Loading league scoring settings...', 'loading');
+                    this.showStatus('Loading league settings...', 'loading');
                     
                     const leagueData = await this.fetchData(`https://api.sleeper.app/v1/league/${leagueId}`);
                     this.scoringSettings = leagueData.scoring_settings || {};
-                    
-                    this.log(`League: ${leagueData.name || 'Unknown'}`);
-                    this.log(`Scoring settings loaded: ${Object.keys(this.scoringSettings).length} categories`);
                     
                     const idpCategories = Object.keys(this.scoringSettings).filter(key => 
                         key.startsWith('idp_') && this.scoringSettings[key] !== 0
                     );
                     
                     if (idpCategories.length === 0) {
-                        throw new Error('No IDP scoring found in this league. Please check your league settings.');
+                        throw new Error('No IDP scoring found in this league.');
                     }
-                    
-                    this.log(`Found ${idpCategories.length} IDP scoring categories: ${idpCategories.join(', ')}`);
 
                     this.showStatus('Loading NFL players...', 'loading');
                     this.players = await this.fetchData('https://api.sleeper.app/v1/players/nfl');
-                    this.log(`Loaded ${Object.keys(this.players).length} NFL players`);
+
+                    this.showStatus('Loading league rosters...', 'loading');
+                    this.leagueRosters = await this.fetchData(`https://api.sleeper.app/v1/league/${leagueId}/rosters`);
 
                     this.showStatus('Loading NFL schedules...', 'loading');
                     await this.loadNFLSchedule(season, maxWeek);
 
-                    // FORCE RESET - Clear any previous results completely
                     this.results = { DL: {}, LB: {}, DB: {} };
+                    this.playerStats = {};
                     this.initializeResults();
 
                     let totalRealPlayers = 0;
@@ -273,47 +302,39 @@
                         this.showStatus(`Processing Week ${week}...`, 'loading');
                         const weekRealPlayers = await this.processWeekData(season, week);
                         totalRealPlayers += weekRealPlayers;
-                        this.updateDebugDisplay();
                         await new Promise(resolve => setTimeout(resolve, 300)); 
                     }
 
                     if (totalRealPlayers === 0) {
-                        throw new Error(`FAILED: Processed 0 real defensive players across all weeks. Cannot display fake data.`);
+                        throw new Error(`No defensive players found. Check your league settings.`);
                     }
 
-                    this.log(`SUCCESS: Processed ${totalRealPlayers} real defensive players total`);
                     this.showStatus('Analysis complete!', 'success');
                     document.getElementById('positionTabs').style.display = 'flex';
                     document.getElementById('resultsSection').style.display = 'block';
+                    document.getElementById('waiverBtn').style.display = 'block';
                     this.showPosition('DL');
 
                 } catch (error) {
-                    this.log(`ERROR: ${error.message}`);
                     this.showStatus(error.message, 'error');
                     document.getElementById('positionTabs').style.display = 'none';
                     document.getElementById('resultsSection').style.display = 'none';
                 } finally {
                     document.getElementById('analyzeBtn').disabled = false;
-                    this.updateDebugDisplay();
                 }
             }
 
             async loadNFLSchedule(season, maxWeek) {
                 this.nflSchedule = {};
                 
-                for (let week = 1; week <= maxWeek; week++) {
+                for (let week = 1; week <= maxWeek + 1; week++) { // Load next week too for waivers
                     try {
                         const url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${week}&year=${season}`;
                         const data = await this.fetchData(url);
                         
-                        if (!data.events || data.events.length === 0) {
-                            this.log(`No games found for Week ${week}`);
-                            continue;
-                        }
+                        if (!data.events || data.events.length === 0) continue;
 
                         this.nflSchedule[week] = {};
-                        let gameCount = 0;
-
                         data.events.forEach(game => {
                             if (game.competitions?.[0]?.competitors?.length === 2) {
                                 const competitors = game.competitions[0].competitors;
@@ -322,15 +343,13 @@
 
                                 this.nflSchedule[week][team1] = team2;
                                 this.nflSchedule[week][team2] = team1;
-                                gameCount++;
                             }
                         });
                         
-                        this.log(`Week ${week}: ${gameCount} games loaded`);
                         await new Promise(resolve => setTimeout(resolve, 200));
                         
                     } catch (error) {
-                        this.log(`Failed to load Week ${week} schedule: ${error.message}`);
+                        // Continue if schedule loading fails for a week
                     }
                 }
             }
@@ -357,7 +376,6 @@
             async processWeekData(season, week) {
                 const weekSchedule = this.nflSchedule[week];
                 if (!weekSchedule || Object.keys(weekSchedule).length === 0) {
-                    this.log(`No schedule data for Week ${week}`);
                     return 0;
                 }
 
@@ -379,104 +397,63 @@
                     weekStats = await this.fetchData(url);
                     
                     if (!weekStats || Object.keys(weekStats).length === 0) {
-                        this.log(`No stats available for Week ${week}`);
                         return 0;
                     }
-                    this.log(`Loaded Week ${week} stats: ${Object.keys(weekStats).length} players`);
                 } catch (error) {
-                    this.log(`Failed to load Week ${week} stats: ${error.message}`);
                     return 0;
                 }
 
-                const sampleKeys = Object.keys(weekStats).slice(0, 2);
-                sampleKeys.forEach(key => {
-                    const sample = weekStats[key];
-                    this.log(`Week ${week} Sample - Key: ${key}, Type: ${typeof sample}, Keys: ${Object.keys(sample).slice(0, 10).join(',')}`);
-                });
-
-                let processedCount = 0;
-                let defensiveCount = 0;
                 let scoringCount = 0;
-                let realDataFound = false;
 
                 Object.entries(weekStats).forEach(([playerId, stats]) => {
                     if (!stats || typeof stats !== 'object') return;
-                    
-                    processedCount++;
                     
                     const hasRealStats = Object.keys(stats).some(key => 
                         key.startsWith('idp_') || 
                         ['tkl_solo', 'tkl_ast', 'sck', 'int', 'ff', 'fum_rec', 'pass_def', 'qb_hit'].includes(key)
                     );
                     
-                    if (!hasRealStats) {
-                        if (processedCount <= 3) {
-                            this.log(`SKIPPING ranking data for ${playerId}: ${Object.keys(stats).slice(0, 5).join(',')}`);
-                        }
-                        return;
-                    }
-                    
-                    realDataFound = true;
+                    if (!hasRealStats) return;
                     
                     const masterPlayer = this.players[playerId];
-                    if (!masterPlayer || !masterPlayer.team) {
-                        return;
-                    }
+                    if (!masterPlayer || !masterPlayer.team) return;
 
                     const fantasyPoints = this.calculateFantasyPoints(stats);
                     const defensivePositions = this.getDefensivePositions(masterPlayer); 
                     
-                    if (defensivePositions.length === 0) {
-                        return; 
-                    }
+                    if (defensivePositions.length === 0 || fantasyPoints <= 0) return;
                     
-                    defensiveCount++;
-
-                    if (fantasyPoints <= 0) {
-                        return; 
+                    // Store player stats for waiver recommendations
+                    if (!this.playerStats[playerId]) {
+                        this.playerStats[playerId] = {
+                            player: masterPlayer,
+                            totalPoints: 0,
+                            positions: defensivePositions
+                        };
                     }
+                    this.playerStats[playerId].totalPoints += fantasyPoints;
                     
                     scoringCount++;
 
                     const defenseTeam = this.normalizeTeam(masterPlayer.team);
                     const offenseTeam = weekSchedule[defenseTeam];
 
-                    if (!offenseTeam || !this.results.DL[offenseTeam]) {
-                        this.log(`Cannot map ${defenseTeam} to opponent`);
-                        return;
-                    }
+                    if (!offenseTeam || !this.results.DL[offenseTeam]) return;
 
                     defensivePositions.forEach(position => {
                         const currentTotal = weeklyTotals[position].get(offenseTeam) || 0;
                         weeklyTotals[position].set(offenseTeam, currentTotal + fantasyPoints);
                     });
-
-                    const playerName = `${masterPlayer.first_name || ''} ${masterPlayer.last_name || ''}`.trim();
-                    
-                    defensivePositions.forEach(position => {
-                        this.log(`${playerName} (${position}, ${defenseTeam}) vs ${offenseTeam}: ${fantasyPoints.toFixed(1)} pts`);
-                    });
                 });
 
-                this.log(`Week ${week} processed: ${processedCount} total, ${defensiveCount} defensive, ${scoringCount} scoring`);
-                
-                if (!realDataFound || scoringCount === 0) {
-                    this.log(`ERROR: Week ${week} - No real defensive stats found. NOT updating results.`);
-                    return 0;
-                }
+                if (scoringCount === 0) return 0;
 
                 Object.keys(this.teamMappings).forEach(offenseTeam => {
                     const hasPoints = ['DL', 'LB', 'DB'].some(pos => weeklyTotals[pos].get(offenseTeam) > 0);
                     
                     if (hasPoints) {
-                        this.log(`BEFORE UPDATE ${offenseTeam}: DL=${this.results.DL[offenseTeam].pointsAllowed}, LB=${this.results.LB[offenseTeam].pointsAllowed}, DB=${this.results.DB[offenseTeam].pointsAllowed}`);
-                        
                         ['DL', 'LB', 'DB'].forEach(position => {
                             const weekPoints = weeklyTotals[position].get(offenseTeam) || 0;
-                            
-                            if (weekPoints > 0) {
-                                this.log(`Adding ${weekPoints.toFixed(1)} ${position} points to ${offenseTeam}`);
-                            }
                             
                             this.results[position][offenseTeam].pointsAllowed += weekPoints;
                             this.results[position][offenseTeam].weeklyBreakdown.push(weekPoints);
@@ -489,8 +466,6 @@
                         ['DL', 'LB', 'DB'].forEach(position => {
                             this.results[position][offenseTeam].gamesPlayed++;
                         });
-
-                        this.log(`AFTER UPDATE ${offenseTeam}: DL=${this.results.DL[offenseTeam].pointsAllowed}, LB=${this.results.LB[offenseTeam].pointsAllowed}, DB=${this.results.DB[offenseTeam].pointsAllowed}`);
                     }
                 });
                 
@@ -548,6 +523,111 @@
                 }
                 
                 return Array.from(positions);
+            }
+
+            async getWaiverRecommendations() {
+                try {
+                    this.showStatus('Finding waiver recommendations...', 'loading');
+                    
+                    const currentWeek = parseInt(document.getElementById('maxWeek').value);
+                    const nextWeek = currentWeek + 1;
+                    const nextWeekSchedule = this.nflSchedule[nextWeek];
+                    
+                    if (!nextWeekSchedule) {
+                        throw new Error(`No schedule found for Week ${nextWeek}`);
+                    }
+
+                    // Get rostered players
+                    const rosteredPlayers = new Set();
+                    this.leagueRosters.forEach(roster => {
+                        if (roster.players) {
+                            roster.players.forEach(playerId => rosteredPlayers.add(playerId));
+                        }
+                    });
+
+                    const recommendations = {};
+                    
+                    ['DL', 'LB', 'DB'].forEach(position => {
+                        // Get worst 8 offenses for this position (allow most points)
+                        const worstOffenses = Object.entries(this.results[position])
+                            .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed)
+                            .slice(0, 8)
+                            .map(entry => entry[0]);
+
+                        // Find defensive teams playing against these bad offenses next week
+                        const favorableDefenses = [];
+                        Object.entries(nextWeekSchedule).forEach(([defenseTeam, offenseTeam]) => {
+                            if (worstOffenses.includes(offenseTeam)) {
+                                favorableDefenses.push(defenseTeam);
+                            }
+                        });
+
+                        // Find available players from these defenses for this position
+                        const availablePlayers = [];
+                        Object.entries(this.playerStats).forEach(([playerId, playerData]) => {
+                            if (rosteredPlayers.has(playerId)) return;
+                            if (!playerData.positions.includes(position)) return;
+                            
+                            const playerTeam = this.normalizeTeam(playerData.player.team);
+                            if (!favorableDefenses.includes(playerTeam)) return;
+                            
+                            const opponent = nextWeekSchedule[playerTeam];
+                            const avgAllowed = this.results[position][opponent]?.pointsAllowed / this.results[position][opponent]?.gamesPlayed || 0;
+                            
+                            availablePlayers.push({
+                                playerId,
+                                player: playerData.player,
+                                totalPoints: playerData.totalPoints,
+                                team: playerTeam,
+                                opponent,
+                                avgAllowed
+                            });
+                        });
+
+                        // Get top scorer for this position
+                        availablePlayers.sort((a, b) => b.totalPoints - a.totalPoints);
+                        if (availablePlayers.length > 0) {
+                            recommendations[position] = availablePlayers[0];
+                        }
+                    });
+
+                    this.displayWaiverRecommendations(recommendations, nextWeek);
+                    document.getElementById('waiverSection').style.display = 'block';
+                    this.showStatus('Waiver recommendations ready!', 'success');
+
+                } catch (error) {
+                    this.showStatus(`Error: ${error.message}`, 'error');
+                }
+            }
+
+            displayWaiverRecommendations(recommendations, nextWeek) {
+                const container = document.getElementById('waiverRecommendations');
+                container.innerHTML = '';
+
+                ['DL', 'LB', 'DB'].forEach(position => {
+                    const rec = recommendations[position];
+                    if (!rec) {
+                        container.innerHTML += `
+                            <div class="waiver-card">
+                                <h3>${position}</h3>
+                                <p>No favorable matchups found</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const playerName = `${rec.player.first_name || ''} ${rec.player.last_name || ''}`.trim();
+                    
+                    container.innerHTML += `
+                        <div class="waiver-card">
+                            <h3>${position} Recommendation</h3>
+                            <div class="player-name">${playerName}</div>
+                            <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
+                            <div class="points">Season Total: ${rec.totalPoints.toFixed(1)} pts</div>
+                            <div class="points">Opponent Avg Allowed: ${rec.avgAllowed.toFixed(1)} pts/game</div>
+                        </div>
+                    `;
+                });
             }
 
             showPosition(position) {
@@ -613,8 +693,6 @@
                     `;
                     tableBody.appendChild(row);
                 });
-
-                this.log(`Results displayed for ${position}: ${sortedTeams.length} teams`);
             }
         }
 
