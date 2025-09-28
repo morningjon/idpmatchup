@@ -27,7 +27,7 @@
         .header { background: linear-gradient(135deg, #1a1f26 0%, #2d3748 100%); color: #e6e6e6; padding: 30px; text-align: center; border-bottom: 2px solid #00d4aa; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; color: #00d4aa; }
         .header p { color: #a0aec0; }
-        .controls { padding: 30px; background: #2d3748; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .controls { padding: 30px; background: #2d3748; display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .input-group label { font-weight: 600; color: #e6e6e6; }
         .input-group input, .input-group select { padding: 12px; border: 2px solid #4a5568; border-radius: 8px; font-size: 16px; min-width: 200px; background: #1a1f26; color: #e6e6e6; }
@@ -60,21 +60,20 @@
         .team-name { font-weight: 600; color: #e6e6e6; }
         .points { font-weight: 700; text-align: center; }
         .rank-1-8 { background-color: rgba(72, 187, 120, 0.2) !important; border-left: 4px solid #48bb78; }
-        .rank-9-16 { background-color: rgba(251, 211, 141, 0.2) !important; border-left: 4px solid #ed8936; } 
-        .rank-17-24 { background-color: rgba(237, 137, 54, 0.2) !important; border-left: 4px solid #fbd38d; } 
+        .rank-9-16 { background-color: rgba(255, 235, 59, 0.2) !important; border-left: 4px solid #ffeb3b; }
+        .rank-17-24 { background-color: rgba(255, 152, 0, 0.2) !important; border-left: 4px solid #ff9800; }
         .rank-25-32 { background-color: rgba(245, 101, 101, 0.2) !important; border-left: 4px solid #f56565; }
         .legend { display: flex; gap: 20px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 500; color: #e6e6e6; }
         .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid #4a5568; }
         .legend .rank-1-8 .legend-color { background-color: #48bb78; }
-        .legend .rank-9-16 .legend-color { background-color: #ed8936; }
-        .legend .rank-17-24 .legend-color { background-color: #fbd38d; }
+        .legend .rank-9-16 .legend-color { background-color: #ffeb3b; }
+        .legend .rank-17-24 .legend-color { background-color: #ff9800; }
         .legend .rank-25-32 .legend-color { background-color: #f56565; }
         .waiver-section { margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #2d3748, #1a1f26); border-radius: 12px; border: 2px solid #00d4aa; }
         .waiver-header { text-align: center; margin-bottom: 20px; }
         .waiver-header h2 { color: #00d4aa; font-size: 1.8rem; margin-bottom: 10px; }
         .waiver-header p { color: #a0aec0; }
-        .waiver-recommendations { display: flex; flex-direction: column; gap: 20px; }
         .waiver-recommendations { display: flex; flex-direction: column; gap: 20px; }
         .waiver-top-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
         .waiver-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -88,8 +87,8 @@
             .position-tabs { margin: 0 15px; }
             .position-tab { font-size: 0.8rem; padding: 12px 8px; min-width: 100px; }
             .results-section { padding: 20px 15px; }
-            .waiver-recommendations { grid-template-columns: 1fr; }
-            .waiver-card:nth-child(4), .waiver-card:nth-child(5) { grid-column: 1; margin: 0; }
+            .waiver-top-row { grid-template-columns: 1fr; }
+            .waiver-bottom-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
