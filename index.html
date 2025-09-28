@@ -2,64 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sleeper Defensive Matchup Analyzer - All 32 Teams</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="IDP Analyzer">
+    <meta name="msapplication-TileColor" content="#2c3e50">
+    <meta name="description" content="Analyze NFL defensive player matchups and get waiver wire recommendations for fantasy football IDP leagues">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); overflow: hidden; }
-        .header { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); color: white; padding: 30px; text-align: center; }
-        .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
-        .controls { padding: 30px; background: #f8f9fa; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f1419 0%, #1a1f26 100%); min-height: 100vh; padding: 20px; color: #e6e6e6; }
+        .container { max-width: 1400px; margin: 0 auto; background: #1a1f26; border-radius: 15px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); overflow: hidden; border: 1px solid #2d3748; }
+        .header { background: linear-gradient(135deg, #1a1f26 0%, #2d3748 100%); color: #e6e6e6; padding: 30px; text-align: center; border-bottom: 2px solid #00d4aa; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; color: #00d4aa; }
+        .header p { color: #a0aec0; }
+        .controls { padding: 30px; background: #2d3748; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
         .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-weight: 600; color: #2c3e50; }
-        .input-group input, .input-group select { padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 16px; min-width: 200px; }
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #3498db, #2980b9); color: white; transition: all 0.3s ease; }
-        .btn:hover { background: linear-gradient(135deg, #2980b9, #3498db); transform: translateY(-2px); }
+        .input-group label { font-weight: 600; color: #e6e6e6; }
+        .input-group input, .input-group select { padding: 12px; border: 2px solid #4a5568; border-radius: 8px; font-size: 16px; min-width: 200px; background: #1a1f26; color: #e6e6e6; }
+        .input-group input:focus, .input-group select:focus { border-color: #00d4aa; outline: none; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #00d4aa, #00b894); color: #1a1f26; transition: all 0.3s ease; }
+        .btn:hover { background: linear-gradient(135deg, #00b894, #00d4aa); transform: translateY(-2px); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn.waiver { background: linear-gradient(135deg, #27ae60, #2ecc71); margin-top: 10px; }
-        .btn.waiver:hover { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .position-tabs { display: flex; background: #e9ecef; margin: 0 30px; border-radius: 8px; overflow: hidden; }
-        .position-tab { flex: 1; padding: 15px 20px; background: #e9ecef; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; color: #6c757d; }
-        .position-tab.active { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
-        .status { padding: 20px 30px; text-align: center; font-size: 16px; font-weight: 500; }
-        .status.loading { color: #3498db; }
-        .status.error { color: #e74c3c; background: #fdf2f2; border-left: 4px solid #e74c3c; }
-        .status.success { color: #27ae60; background: #f0f9f4; border-left: 4px solid #27ae60; }
-        .results-section { padding: 30px; }
+        .btn.waiver { background: linear-gradient(135deg, #00d4aa, #00b894); margin-top: 10px; }
+        .btn.waiver:hover { background: linear-gradient(135deg, #00b894, #00d4aa); }
+        .position-tabs { display: flex; background: #2d3748; margin: 0 30px; border-radius: 8px; overflow: hidden; flex-wrap: wrap; border: 1px solid #4a5568; }
+        .position-tab { flex: 1; min-width: 140px; padding: 15px 10px; background: #2d3748; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; color: #a0aec0; text-align: center; border-right: 1px solid #4a5568; }
+        .position-tab:last-child { border-right: none; }
+        .position-tab.active { background: linear-gradient(135deg, #00d4aa, #00b894); color: #1a1f26; }
+        .position-tab:hover:not(.active) { background: #4a5568; color: #e6e6e6; }
+        .status { padding: 20px 30px; text-align: center; font-size: 16px; font-weight: 500; background: #1a1f26; }
+        .status.loading { color: #00d4aa; }
+        .status.error { color: #f56565; background: #2d1b1b; border-left: 4px solid #f56565; }
+        .status.success { color: #00d4aa; background: #1a2e25; border-left: 4px solid #00d4aa; }
+        .results-section { padding: 30px; background: #1a1f26; }
         .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .summary-card { background: linear-gradient(135deg, #ffffff, #f8f9fa); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        .summary-card h3 { color: #6c757d; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; }
-        .summary-card .value { font-size: 2rem; font-weight: 700; color: #2c3e50; }
-        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #e9ecef; }
+        .summary-card { background: linear-gradient(135deg, #2d3748, #4a5568); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border: 1px solid #4a5568; }
+        .summary-card h3 { color: #a0aec0; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; }
+        .summary-card .value { font-size: 2rem; font-weight: 700; color: #00d4aa; }
+        .table-container { background: #2d3748; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border: 1px solid #4a5568; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 16px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
-        td { padding: 14px 12px; border-bottom: 1px solid #f1f3f4; }
-        tr:hover { background-color: #f8f9fa; }
+        th { background: linear-gradient(135deg, #1a1f26, #2d3748); color: #00d4aa; padding: 16px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; border-bottom: 2px solid #00d4aa; }
+        td { padding: 14px 12px; border-bottom: 1px solid #4a5568; color: #e6e6e6; }
+        tr:hover { background-color: #374151; }
         .rank { font-weight: 700; text-align: center; min-width: 50px; }
-        .team-name { font-weight: 600; color: #2c3e50; }
+        .team-name { font-weight: 600; color: #e6e6e6; }
         .points { font-weight: 700; text-align: center; }
-        .rank-1-8 { background-color: #d4edda !important; }
-        .rank-9-16 { background-color: #fff3cd !important; }
-        .rank-17-24 { background-color: #f8d7da !important; }
-        .rank-25-32 { background-color: #f1c0c7 !important; }
+        .rank-1-8 { background-color: rgba(72, 187, 120, 0.2) !important; border-left: 4px solid #48bb78; }
+        .rank-9-16 { background-color: rgba(251, 211, 141, 0.2) !important; border-left: 4px solid #ed8936; } 
+        .rank-17-24 { background-color: rgba(237, 137, 54, 0.2) !important; border-left: 4px solid #fbd38d; } 
+        .rank-25-32 { background-color: rgba(245, 101, 101, 0.2) !important; border-left: 4px solid #f56565; }
         .legend { display: flex; gap: 20px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
-        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 500; }
-        .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid #ccc; }
-        .waiver-section { margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #f8f9fa, #ffffff); border-radius: 12px; border: 2px solid #e9ecef; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 500; color: #e6e6e6; }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; border: 1px solid #4a5568; }
+        .legend .rank-1-8 .legend-color { background-color: #48bb78; }
+        .legend .rank-9-16 .legend-color { background-color: #ed8936; }
+        .legend .rank-17-24 .legend-color { background-color: #fbd38d; }
+        .legend .rank-25-32 .legend-color { background-color: #f56565; }
+        .waiver-section { margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #2d3748, #1a1f26); border-radius: 12px; border: 2px solid #00d4aa; }
         .waiver-header { text-align: center; margin-bottom: 20px; }
-        .waiver-header h2 { color: #2c3e50; font-size: 1.8rem; margin-bottom: 10px; }
-        .waiver-recommendations { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .waiver-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-left: 4px solid #27ae60; }
-        .waiver-card h3 { color: #2c3e50; font-size: 1.2rem; margin-bottom: 10px; }
-        .waiver-card .player-name { font-size: 1.1rem; font-weight: 600; color: #27ae60; margin-bottom: 5px; }
-        .waiver-card .matchup { color: #6c757d; margin-bottom: 5px; }
-        .waiver-card .points { color: #2c3e50; font-weight: 600; }
+        .waiver-header h2 { color: #00d4aa; font-size: 1.8rem; margin-bottom: 10px; }
+        .waiver-header p { color: #a0aec0; }
+        .waiver-recommendations { display: flex; flex-direction: column; gap: 20px; }
+        .waiver-recommendations { display: flex; flex-direction: column; gap: 20px; }
+        .waiver-top-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .waiver-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .waiver-card { background: #2d3748; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border: 2px solid #00d4aa; text-align: center; }
+        .waiver-card h3 { color: #00d4aa; font-size: 1.2rem; margin-bottom: 10px; }
+        .waiver-card .player-name { font-size: 1.1rem; font-weight: 600; color: #e6e6e6; margin-bottom: 5px; }
+        .waiver-card .matchup { color: #a0aec0; margin-bottom: 5px; }
+        .waiver-card .points { color: #e6e6e6; font-weight: 600; }
         @media (max-width: 768px) {
             .controls { flex-direction: column; align-items: stretch; }
             .position-tabs { margin: 0 15px; }
+            .position-tab { font-size: 0.8rem; padding: 12px 8px; min-width: 100px; }
             .results-section { padding: 20px 15px; }
             .waiver-recommendations { grid-template-columns: 1fr; }
+            .waiver-card:nth-child(4), .waiver-card:nth-child(5) { grid-column: 1; margin: 0; }
         }
     </style>
 </head>
@@ -67,7 +97,7 @@
     <div class="container">
         <div class="header">
             <h1>NFL Offensive Teams Allowing Points to Defense</h1>
-            <p>Ranking ALL 32 NFL OFFENSIVE teams by fantasy points they ALLOW to defensive players</p>
+            <p>Ranking ALL 32 NFL OFFENSIVE teams by fantasy points they ALLOW to defensive players (including dual threat analysis)</p>
         </div>
 
         <div class="controls">
@@ -122,26 +152,32 @@
             <button class="position-tab" onclick="showPosition('DB')" data-position="DB">
                 Defensive Backs (DB)
             </button>
+            <button class="position-tab" onclick="showPosition('DL/LB')" data-position="DL/LB">
+                DL/LB Dual
+            </button>
+            <button class="position-tab" onclick="showPosition('LB/DB')" data-position="LB/DB">
+                LB/DB Dual
+            </button>
         </div>
 
         <div id="status" class="status">Enter your Sleeper League ID to analyze all 32 teams</div>
 
         <div id="resultsSection" class="results-section" style="display: none;">
             <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color rank-1-8"></div>
+                <div class="legend-item rank-1-8">
+                    <div class="legend-color"></div>
                     <span>1-8 (WORST Offenses - Allow Most Points)</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color rank-9-16"></div>
+                <div class="legend-item rank-9-16">
+                    <div class="legend-color"></div>
                     <span>9-16</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color rank-17-24"></div>
+                <div class="legend-item rank-17-24">
+                    <div class="legend-color"></div>
                     <span>17-24</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color rank-25-32"></div>
+                <div class="legend-item rank-25-32">
+                    <div class="legend-color"></div>
                     <span>25-32 (BEST Offenses - Allow Fewest Points)</span>
                 </div>
             </div>
@@ -189,7 +225,9 @@
                 this.results = {
                     DL: {},
                     LB: {},
-                    DB: {}
+                    DB: {},
+                    'DL/LB': {},
+                    'LB/DB': {}
                 };
 
                 this.teamMappings = {
@@ -276,7 +314,7 @@
                     this.showStatus('Loading NFL schedules...', 'loading');
                     await this.loadNFLSchedule(season, maxWeek);
 
-                    this.results = { DL: {}, LB: {}, DB: {} };
+                    this.results = { DL: {}, LB: {}, DB: {}, 'DL/LB': {}, 'LB/DB': {} };
                     this.playerStats = {};
                     this.initializeResults();
 
@@ -342,8 +380,17 @@
                 return this.espnTeamMap[abbr] || abbr; 
             }
 
+            getDualThreatCategory(positions) {
+                if (positions.length <= 1) return null;
+                
+                // Sort positions in specific order: DL, LB, DB
+                const positionOrder = { 'DL': 1, 'LB': 2, 'DB': 3 };
+                const sortedPositions = [...positions].sort((a, b) => positionOrder[a] - positionOrder[b]);
+                return sortedPositions.join('/');
+            }
+
             initializeResults() {
-                ['DL', 'LB', 'DB'].forEach(position => {
+                ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
                     this.results[position] = {};
                     Object.keys(this.teamMappings).forEach(team => {
                         this.results[position][team] = {
@@ -366,13 +413,17 @@
                 const weeklyTotals = { 
                     DL: new Map(), 
                     LB: new Map(), 
-                    DB: new Map()
+                    DB: new Map(),
+                    'DL/LB': new Map(),
+                    'LB/DB': new Map()
                 };
                 
                 Object.keys(this.teamMappings).forEach(team => {
                     weeklyTotals.DL.set(team, 0);
                     weeklyTotals.LB.set(team, 0);
                     weeklyTotals.DB.set(team, 0);
+                    weeklyTotals['DL/LB'].set(team, 0);
+                    weeklyTotals['LB/DB'].set(team, 0);
                 });
 
                 let weekStats = null;
@@ -412,7 +463,8 @@
                         this.playerStats[playerId] = {
                             player: masterPlayer,
                             totalPoints: 0,
-                            positions: defensivePositions
+                            positions: defensivePositions,
+                            dualThreatCategory: this.getDualThreatCategory(defensivePositions)
                         };
                     }
                     this.playerStats[playerId].totalPoints += fantasyPoints;
@@ -428,15 +480,24 @@
                         const currentTotal = weeklyTotals[position].get(offenseTeam) || 0;
                         weeklyTotals[position].set(offenseTeam, currentTotal + fantasyPoints);
                     });
+
+                    // Handle dual threat players
+                    const dualThreatCategory = this.getDualThreatCategory(defensivePositions);
+                    if (dualThreatCategory && weeklyTotals[dualThreatCategory]) {
+                        const currentDualTotal = weeklyTotals[dualThreatCategory].get(offenseTeam) || 0;
+                        weeklyTotals[dualThreatCategory].set(offenseTeam, currentDualTotal + fantasyPoints);
+                    }
                 });
 
                 if (scoringCount === 0) return 0;
 
                 Object.keys(this.teamMappings).forEach(offenseTeam => {
-                    const hasPoints = ['DL', 'LB', 'DB'].some(pos => weeklyTotals[pos].get(offenseTeam) > 0);
+                    const hasPoints = ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].some(pos => 
+                        weeklyTotals[pos].get(offenseTeam) > 0
+                    );
                     
                     if (hasPoints) {
-                        ['DL', 'LB', 'DB'].forEach(position => {
+                        ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
                             const weekPoints = weeklyTotals[position].get(offenseTeam) || 0;
                             
                             this.results[position][offenseTeam].pointsAllowed += weekPoints;
@@ -447,8 +508,11 @@
                             }
                         });
                         
-                        ['DL', 'LB', 'DB'].forEach(position => {
-                            this.results[position][offenseTeam].gamesPlayed++;
+                        // Only increment games played once per team (use DL as reference)
+                        this.results['DL'][offenseTeam].gamesPlayed++;
+                        // Copy games played to all other categories for consistency
+                        ['LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
+                            this.results[position][offenseTeam].gamesPlayed = this.results['DL'][offenseTeam].gamesPlayed;
                         });
                     }
                 });
@@ -476,37 +540,37 @@
             }
 
             getDefensivePositions(player) {
-                const positions = new Set();
-                const nflPos = (player.position || '').toUpperCase().trim();
                 const fantasyPositions = player.fantasy_positions || [];
 
+                // Use exactly what Sleeper says in fantasy_positions
+                const eligiblePositions = [];
+                
+                // Check each fantasy position individually
                 fantasyPositions.forEach(pos => {
-                    if (['DL', 'DT', 'DE'].includes(pos)) positions.add('DL');
-                    if (['LB', 'OLB', 'ILB', 'MLB'].includes(pos)) positions.add('LB');
-                    if (['DB', 'S', 'CB', 'FS', 'SS'].includes(pos)) positions.add('DB');
+                    if (pos === 'DL' || pos === 'DE' || pos === 'DT') {
+                        if (!eligiblePositions.includes('DL')) {
+                            eligiblePositions.push('DL');
+                        }
+                    } else if (pos === 'LB') {
+                        if (!eligiblePositions.includes('LB')) {
+                            eligiblePositions.push('LB');
+                        }
+                    } else if (pos === 'DB') {
+                        if (!eligiblePositions.includes('DB')) {
+                            eligiblePositions.push('DB');
+                        }
+                    }
                 });
                 
-                const isDEorDT = ['DE', 'DT', 'NT', 'DT/DE'].includes(nflPos);
-                const isLB = ['LB', 'OLB', 'ILB', 'MLB', 'ROLB', 'LOLB'].includes(nflPos);
-                const isDB = ['CB', 'S', 'FS', 'SS', 'DB', 'SAF', 'NB'].includes(nflPos);
-                const isEdgeHybrid = nflPos.includes('EDGE') || nflPos.includes('DL/LB') || nflPos.includes('LB/DL') || nflPos.includes('DE/LB') || nflPos.includes('LB/DE');
-                
-                if (isDEorDT) positions.add('DL');
-                if (isLB) positions.add('LB');
-                if (isDB) positions.add('DB');
-
-                if (isEdgeHybrid) {
-                    positions.add('DL');
-                    positions.add('LB');
-                }
-
-                else if (nflPos.includes('/')) {
-                    if (nflPos.includes('DL') || nflPos.includes('DE') || nflPos.includes('DT')) positions.add('DL');
-                    if (nflPos.includes('LB')) positions.add('LB');
-                    if (nflPos.includes('DB') || nflPos.includes('S') || nflPos.includes('CB')) positions.add('DB');
+                // If no fantasy positions, fall back to NFL position
+                if (eligiblePositions.length === 0) {
+                    const nflPos = (player.position || '').toUpperCase().trim();
+                    if (['DE', 'DT', 'NT'].includes(nflPos)) eligiblePositions.push('DL');
+                    else if (['LB', 'OLB', 'ILB', 'MLB', 'ROLB', 'LOLB'].includes(nflPos)) eligiblePositions.push('LB');
+                    else if (['CB', 'S', 'FS', 'SS', 'DB', 'SAF', 'NB'].includes(nflPos)) eligiblePositions.push('DB');
                 }
                 
-                return Array.from(positions);
+                return eligiblePositions;
             }
 
             async getWaiverRecommendations() {
@@ -531,7 +595,7 @@
 
                     const recommendations = {};
                     
-                    ['DL', 'LB', 'DB'].forEach(position => {
+                    ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
                         // Get worst 8 offenses for this position (allow most points)
                         const worstOffenses = Object.entries(this.results[position])
                             .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed)
@@ -550,7 +614,18 @@
                         const availablePlayers = [];
                         Object.entries(this.playerStats).forEach(([playerId, playerData]) => {
                             if (rosteredPlayers.has(playerId)) return;
-                            if (!playerData.positions.includes(position)) return;
+                            
+                            // Check if player matches the position category
+                            let positionMatch = false;
+                            if (['DL', 'LB', 'DB'].includes(position)) {
+                                positionMatch = playerData.positions.includes(position);
+                            } else {
+                                // For dual threat categories, check if player has exactly those positions
+                                const playerDualCategory = this.getDualThreatCategory(playerData.positions);
+                                positionMatch = playerDualCategory === position;
+                            }
+                            
+                            if (!positionMatch) return;
                             
                             const playerTeam = this.normalizeTeam(playerData.player.team);
                             if (!favorableDefenses.includes(playerTeam)) return;
@@ -588,30 +663,62 @@
                 const container = document.getElementById('waiverRecommendations');
                 container.innerHTML = '';
 
+                // Create top row container for DL, LB, DB
+                const topRow = document.createElement('div');
+                topRow.className = 'waiver-top-row';
+                
                 ['DL', 'LB', 'DB'].forEach(position => {
                     const rec = recommendations[position];
-                    if (!rec) {
-                        container.innerHTML += `
-                            <div class="waiver-card">
-                                <h3>${position}</h3>
-                                <p>No favorable matchups found</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    const playerName = `${rec.player.first_name || ''} ${rec.player.last_name || ''}`.trim();
+                    const card = document.createElement('div');
+                    card.className = 'waiver-card';
                     
-                    container.innerHTML += `
-                        <div class="waiver-card">
+                    if (!rec) {
+                        card.innerHTML = `
+                            <h3>${position}</h3>
+                            <p>No favorable matchups found</p>
+                        `;
+                    } else {
+                        const playerName = `${rec.player.first_name || ''} ${rec.player.last_name || ''}`.trim();
+                        card.innerHTML = `
                             <h3>${position} Recommendation</h3>
                             <div class="player-name">${playerName}</div>
                             <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
                             <div class="points">Season Total: ${rec.totalPoints.toFixed(1)} pts</div>
                             <div class="points">Opponent Avg Allowed: ${rec.avgAllowed.toFixed(1)} pts/game</div>
-                        </div>
-                    `;
+                        `;
+                    }
+                    topRow.appendChild(card);
                 });
+
+                // Create bottom row container for DL/LB, LB/DB
+                const bottomRow = document.createElement('div');
+                bottomRow.className = 'waiver-bottom-row';
+                
+                ['DL/LB', 'LB/DB'].forEach(position => {
+                    const rec = recommendations[position];
+                    const card = document.createElement('div');
+                    card.className = 'waiver-card';
+                    
+                    if (!rec) {
+                        card.innerHTML = `
+                            <h3>${position}</h3>
+                            <p>No favorable matchups found</p>
+                        `;
+                    } else {
+                        const playerName = `${rec.player.first_name || ''} ${rec.player.last_name || ''}`.trim();
+                        card.innerHTML = `
+                            <h3>${position} Recommendation</h3>
+                            <div class="player-name">${playerName}</div>
+                            <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
+                            <div class="points">Season Total: ${rec.totalPoints.toFixed(1)} pts</div>
+                            <div class="points">Opponent Avg Allowed: ${rec.avgAllowed.toFixed(1)} pts/game</div>
+                        `;
+                    }
+                    bottomRow.appendChild(card);
+                });
+
+                container.appendChild(topRow);
+                container.appendChild(bottomRow);
             }
 
             showPosition(position) {
