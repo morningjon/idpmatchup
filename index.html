@@ -229,13 +229,13 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="maxWeek">Through Week:</label>
+                    <label for="maxWeek">Game Week:</label>
                     <select id="maxWeek">
                         <option value="1">Week 1</option>
                         <option value="2">Week 2</option>
                         <option value="3">Week 3</option>
-                        <option value="4" selected>Week 4</option>
-                        <option value="5">Week 5</option>
+                        <option value="4">Week 4</option>
+                        <option value="5" selected>Week 5</option>
                         <option value="6">Week 6</option>
                         <option value="7">Week 7</option>
                         <option value="8">Week 8</option>
@@ -273,10 +273,10 @@
                 Defensive Backs (DB)
             </button>
             <button class="position-tab" onclick="showPosition('DL/LB')" data-position="DL/LB">
-                DL/LB Dual (Best of Both)
+                DL/LB Dual
             </button>
             <button class="position-tab" onclick="showPosition('LB/DB')" data-position="LB/DB">
-                LB/DB Dual (Best of Both)
+                LB/DB Dual
             </button>
         </div>
 
@@ -543,7 +543,12 @@
 
                     const leagueId = this.currentLeagueId;
                     const season = document.getElementById('season').value;
-                    const maxWeek = parseInt(document.getElementById('maxWeek').value);
+                    const gameWeek = parseInt(document.getElementById('maxWeek').value);
+                    const maxWeek = gameWeek - 1;
+
+                    if (maxWeek < 1) {
+                        throw new Error('Please select Game Week 2 or later to analyze data.');
+                    }
 
                     this.showStatus('Loading league settings...', 'loading');
                     
@@ -686,7 +691,7 @@
                     }
                     this.userRoster = userRoster;
 
-                    const currentWeek = parseInt(document.getElementById('maxWeek').value);
+                    const currentWeek = parseInt(document.getElementById('maxWeek').value) - 1;
                     const nextWeek = currentWeek + 1;
                     const nextWeekSchedule = this.nflSchedule[nextWeek];
                     
@@ -1239,7 +1244,7 @@
                 try {
                     this.showStatus('Finding waiver recommendations...', 'loading');
                     
-                    const currentWeek = parseInt(document.getElementById('maxWeek').value);
+                    const currentWeek = parseInt(document.getElementById('maxWeek').value) - 1;
                     const nextWeek = currentWeek + 1;
                     const nextWeekSchedule = this.nflSchedule[nextWeek];
                     
@@ -1430,7 +1435,7 @@
                                     <div class="player-name">${playerName} (${rec.player.position || ''})</div>
                                     <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
                                     <div class="points">Avg Snap Share: ${rec.snapInfo}</div>
-                                    <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game)</div>
+                                    <div class="points">Opponent Rank: #${rec.opponentRank}</div>
                                     ${rec.futureMatchups.length > 0 ? `<button class="schedule-toggle-btn" data-target="${scheduleId}">View Schedule Strength</button>` : ''}
                                     ${scheduleHTML}
                                 </div>
@@ -1477,7 +1482,7 @@
                                     <div class="player-name">${playerName} (${rec.player.position || ''})</div>
                                     <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
                                     <div class="points">Avg Snap Share: ${rec.snapInfo}</div>
-                                    <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game)</div>
+                                    <div class="points">Opponent Rank: #${rec.opponentRank}</div>
                                     <div class="points">${rankInfo}</div>
                                     ${rec.futureMatchups.length > 0 ? `<button class="schedule-toggle-btn" data-target="${scheduleId}">View Schedule Strength</button>` : ''}
                                     ${scheduleHTML}
@@ -1562,7 +1567,7 @@
                     }).sort((a, b) => b.combinedPoints - a.combinedPoints);
                     
                     const totalPoints = sortedTeams.reduce((sum, team) => sum + team.combinedPoints, 0);
-                    const maxWeek = parseInt(document.getElementById('maxWeek').value);
+                    const maxWeek = parseInt(document.getElementById('maxWeek').value) - 1;
 
                     document.getElementById('summaryCards').innerHTML = `
                         <div class="summary-card">
@@ -1626,7 +1631,7 @@
                         .sort((a, b) => b.pointsAllowed - a.pointsAllowed);
                     
                     const totalPoints = sortedTeams.reduce((sum, team) => sum + team.pointsAllowed, 0);
-                    const maxWeek = parseInt(document.getElementById('maxWeek').value);
+                    const maxWeek = parseInt(document.getElementById('maxWeek').value) - 1;
 
                     document.getElementById('summaryCards').innerHTML = `
                         <div class="summary-card">
