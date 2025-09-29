@@ -788,12 +788,21 @@
                         ? (opponentData2.pointsAllowed / opponentData2.gamesPlayed).toFixed(1) 
                         : '0.0';
 
-                    const dualTeams = Object.entries(this.results[dualThreatCategory])
-                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed); 
-                    const dualRank = dualTeams.findIndex(([team]) => team === opponent) + 1;
-                    const opponentDataDual = this.results[dualThreatCategory][opponent];
-                    const avgAllowedDual = opponentDataDual && opponentDataDual.gamesPlayed > 0 
-                        ? (opponentDataDual.pointsAllowed / opponentDataDual.gamesPlayed).toFixed(1) 
+                    const dualTeams = Object.keys(this.teamMappings).map(teamAbbr => {
+                        const p1Data = this.results[pos1][teamAbbr];
+                        const p2Data = this.results[pos2][teamAbbr];
+                        return {
+                            abbr: teamAbbr,
+                            combinedPoints: p1Data.pointsAllowed + p2Data.pointsAllowed
+                        };
+                    }).sort((a, b) => b.combinedPoints - a.combinedPoints);
+                    const dualRank = dualTeams.findIndex(t => t.abbr === opponent) + 1;
+                    const dualOpponentData1 = this.results[pos1][opponent];
+                    const dualOpponentData2 = this.results[pos2][opponent];
+                    const combinedPoints = dualOpponentData1.pointsAllowed + dualOpponentData2.pointsAllowed;
+                    const gamesPlayed = dualOpponentData1.gamesPlayed;
+                    const avgAllowedDual = gamesPlayed > 0 
+                        ? (combinedPoints / gamesPlayed).toFixed(1) 
                         : '0.0';
 
                     bestRankData = {
@@ -1456,7 +1465,8 @@
                                     <div class="player-name">${playerName} (${rec.player.position || ''})</div>
                                     <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
                                     <div class="points">Avg Snap Share: ${rec.snapInfo}</div>
-                                    <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game) ${rankInfo}</div>
+                                    <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game)</div>
+                                    <div class="points">${rankInfo}</div>
                                     ${rec.futureMatchups.length > 0 ? `<button class="schedule-toggle-btn" data-target="${scheduleId}">View Schedule Strength</button>` : ''}
                                     ${scheduleHTML}
                                 </div>
@@ -1507,6 +1517,21 @@
                         </tr>
                     `;
                     
+                    // First, get the sorted rankings for each individual position
+                    const pos1Sorted = Object.entries(this.results[pos1])
+                        .map(([abbr, stats]) => ({ abbr, points: stats.pointsAllowed }))
+                        .sort((a, b) => b.points - a.points);
+                    
+                    const pos2Sorted = Object.entries(this.results[pos2])
+                        .map(([abbr, stats]) => ({ abbr, points: stats.pointsAllowed }))
+                        .sort((a, b) => b.points - a.points);
+                    
+                    // Create rank maps for quick lookup
+                    const pos1Ranks = {};
+                    const pos2Ranks = {};
+                    pos1Sorted.forEach((team, index) => { pos1Ranks[team.abbr] = index + 1; });
+                    pos2Sorted.forEach((team, index) => { pos2Ranks[team.abbr] = index + 1; });
+                    
                     const sortedTeams = Object.keys(this.teamMappings).map(teamAbbr => {
                         const pos1Data = this.results[pos1][teamAbbr];
                         const pos2Data = this.results[pos2][teamAbbr];
@@ -1517,10 +1542,12 @@
                             name: combinedData.name,
                             pos1Points: pos1Data.pointsAllowed,
                             pos2Points: pos2Data.pointsAllowed,
-                            combinedPoints: combinedData.pointsAllowed,
+                            combinedPoints: pos1Data.pointsAllowed + pos2Data.pointsAllowed,
                             gamesPlayed: combinedData.gamesPlayed,
                             pos1Best: pos1Data.bestSingleGame,
-                            pos2Best: pos2Data.bestSingleGame
+                            pos2Best: pos2Data.bestSingleGame,
+                            pos1Rank: pos1Ranks[teamAbbr],
+                            pos2Rank: pos2Ranks[teamAbbr]
                         };
                     }).sort((a, b) => b.combinedPoints - a.combinedPoints);
                     
@@ -1562,7 +1589,7 @@
                         
                         row.innerHTML = `
                             <td class="rank">${rank}</td>
-                            <td class="team-name">${team.abbr} - ${team.name}</td>
+                            <td class="team-name">${team.abbr} - ${team.name} (${pos1} #${team.pos1Rank}, ${pos2} #${team.pos2Rank})</td>
                             <td class="points">${team.pos1Points.toFixed(1)}</td>
                             <td class="points">${team.pos2Points.toFixed(1)}</td>
                             <td class="points">${avgPerGame}</td>
