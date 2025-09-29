@@ -24,6 +24,10 @@
         .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; color: #00d4aa; }
         .header p { color: #a0aec0; }
         .controls { padding: 30px; background: #2d3748; display: flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center; }
+        .control-row { display: flex; gap: 20px; flex-wrap: wrap; width: 100%; justify-content: center; align-items: flex-end; }
+        .control-row.main-settings {
+            align-items: flex-start;
+        }
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .input-group label { font-weight: 600; color: #e6e6e6; }
         .input-group input, .input-group select { padding: 12px; border: 2px solid #4a5568; border-radius: 8px; font-size: 16px; min-width: 200px; background: #1a1f26; color: #e6e6e6; }
@@ -31,10 +35,12 @@
         .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #00d4aa, #00b894); color: #1a1f26; transition: all 0.3s ease; }
         .btn:hover { background: linear-gradient(135deg, #00b894, #00d4aa); transform: translateY(-2px); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .btn.waiver { background: linear-gradient(135deg, #00d4aa, #00b894); margin-top: 10px; }
+        .btn.waiver { background: linear-gradient(135deg, #00d4aa, #00b894); }
         .btn.waiver:hover { background: linear-gradient(135deg, #00b894, #00d4aa); }
-        .btn.roster { background: linear-gradient(135deg, #667eea, #764ba2); margin-top: 10px; }
+        .btn.roster { background: linear-gradient(135deg, #667eea, #764ba2); }
         .btn.roster:hover { background: linear-gradient(135deg, #764ba2, #667eea); }
+        .btn.load { background: linear-gradient(135deg, #f6e05e, #ecc94b); color: #1a1f26; }
+        .btn.load:hover { background: linear-gradient(135deg, #ecc94b, #f6e05e); }
         .position-tabs { display: flex; background: #2d3748; margin: 0 30px; border-radius: 8px; overflow: hidden; flex-wrap: wrap; border: 1px solid #4a5568; }
         .position-tab { flex: 1; min-width: 140px; padding: 15px 10px; background: #2d3748; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; color: #a0aec0; text-align: center; border-right: 1px solid #4a5568; }
         .position-tab:last-child { border-right: none; }
@@ -46,12 +52,12 @@
         .status.success { color: #00d4aa; background: #1a2e25; border-left: 4px solid #00d4aa; }
         .results-section { padding: 30px; background: #1a1f26; }
         .summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-        .summary-card { background: linear-gradient(135deg, #2d3748, #4a5568); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border: 1px solid #4a5568; }
+        .summary-card { background: linear-gradient(135deg, #2d3748, #4a5568); padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); border: 1px solid #4a5568; }
         .summary-card h3 { color: #a0aec0; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; }
         .summary-card .value { font-size: 2rem; font-weight: 700; color: #00d4aa; }
-        .table-container { background: #2d3748; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border: 1px solid #4a5568; }
+        .table-container { background: #2d3748; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); border: 1px solid #4a5568; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: linear-gradient(135deg, #1a1f26, #2d3748); color: #00d4aa; padding: 16px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; border-bottom: 2px solid #00d4aa; }
+        th { background: linear-gradient(135deg, #1a1f26, #2d3748); color: #00d4aa; padding: 16px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; border-bottom: 2px solid #00d4aa; white-space: nowrap; }
         td { padding: 14px 12px; border-bottom: 1px solid #4a5568; color: #e6e6e6; }
         tr:hover { background-color: #374151; }
         .rank { font-weight: 700; text-align: center; min-width: 50px; }
@@ -68,32 +74,58 @@
         .legend .rank-9-16 .legend-color { background-color: #ffeb3b; }
         .legend .rank-17-24 .legend-color { background-color: #ff9800; }
         .legend .rank-25-32 .legend-color { background-color: #f56565; }
-        .waiver-section { margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #2d3748, #1a1f26); border-radius: 12px; border: 2px solid #00d4aa; }
+        
+        .waiver-section { 
+            margin-top: 40px; 
+            padding: 25px; 
+            background: linear-gradient(135deg, #2d3748, #1a1f26); 
+            border-radius: 12px; 
+            border: 2px solid #00d4aa; 
+        }
         .waiver-header { text-align: center; margin-bottom: 20px; }
         .waiver-header h2 { color: #00d4aa; font-size: 1.8rem; margin-bottom: 10px; }
         .waiver-header p { color: #a0aec0; }
         .waiver-recommendations { display: flex; flex-direction: column; gap: 25px; }
         .waiver-top-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .waiver-bottom-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 66.67%; margin: 0 auto; }
-        .waiver-card { background: #2d3748; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border: 2px solid #00d4aa; text-align: center; }
+        .waiver-card { background: #2d3748; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); border: 2px solid #00d4aa; text-align: center; }
         .waiver-card h3 { color: #00d4aa; font-size: 1.2rem; margin-bottom: 15px; }
-        .waiver-option { margin-bottom: 0; padding: 15px; border-radius: 8px; }
+        .waiver-option { 
+            margin-bottom: 0; 
+            padding: 15px; 
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
         .waiver-option:last-child { margin-bottom: 0; }
         .player-name { font-size: 1.1rem; font-weight: 600; color: #e6e6e6; margin-bottom: 5px; }
         .matchup { color: #a0aec0; margin-bottom: 5px; }
-        
-        .roster-section { margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #2d3748, #1a1f26); border-radius: 12px; border: 2px solid #667eea; }
+
+        .roster-section { 
+            margin-top: 30px; 
+            padding: 25px; 
+            background: linear-gradient(135deg, #2d3748, #1a1f26); 
+            border-radius: 12px; 
+            border: 2px solid #667eea; 
+        }
         .roster-header { text-align: center; margin-bottom: 20px; }
         .roster-header h2 { color: #667eea; font-size: 1.8rem; margin-bottom: 10px; }
         .roster-header p { color: #a0aec0; margin-bottom: 15px; }
-        .roster-toggle { display: flex; gap: 10px; justify-content: center; align-items: center; }
-        .roster-toggle-btn { padding: 8px 16px; border: 2px solid #667eea; background: transparent; color: #667eea; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease; }
-        .roster-toggle-btn:hover { background: rgba(102, 126, 234, 0.1); }
-        .roster-toggle-btn.active { background: #667eea; color: #1a1f26; }
         .roster-section-label { color: #667eea; font-size: 1.3rem; font-weight: 600; margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
         .roster-section-label:first-of-type { margin-top: 0; }
         .roster-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .roster-player { background: #2d3748; padding: 15px; border-radius: 8px; border-left: 4px solid #4a5568; }
+        .roster-player { 
+            background: #2d3748; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border-left: 4px solid #4a5568;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
         .roster-player.rank-1-8 { background-color: rgba(72, 187, 120, 0.15); border-left-color: #48bb78; }
         .roster-player.rank-9-16 { background-color: rgba(255, 235, 59, 0.15); border-left-color: #ffeb3b; }
         .roster-player.rank-17-24 { background-color: rgba(255, 152, 0, 0.15); border-left-color: #ff9800; }
@@ -102,6 +134,54 @@
         .roster-player-position { color: #00d4aa; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
         .roster-player-matchup { color: #a0aec0; font-size: 0.9rem; margin-bottom: 5px; }
         .roster-player-rank { color: #e6e6e6; font-size: 0.85rem; }
+
+        .schedule-table-container {
+            margin-top: 10px;
+            padding: 5px;
+            background: #1a1f26;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #4a5568;
+            display: none;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            color: #e6e6e6;
+        }
+        .schedule-table th, .schedule-table td {
+            padding: 4px 6px;
+            text-align: center;
+        }
+        .schedule-table th {
+            color: #00d4aa;
+            font-weight: 600;
+            border-bottom: 1px solid #4a5568;
+        }
+        .schedule-table td.rank-1-8 { background-color: #48bb78; }
+        .schedule-table td.rank-9-16 { background-color: #ffeb3b; color: #1a1f26; }
+        .schedule-table td.rank-17-24 { background-color: #ff9800; }
+        .schedule-table td.rank-25-32 { background-color: #f56565; }
+
+        .schedule-toggle-btn {
+            background: none;
+            border: 1px solid #667eea;
+            color: #667eea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.2s ease;
+        }
+        .schedule-toggle-btn:hover {
+            background: #667eea;
+            color: #1a1f26;
+        }
         
         @media (max-width: 768px) {
             .controls { padding: 20px; }
@@ -123,17 +203,22 @@
         </div>
 
         <div class="controls">
-            <div style="display: flex; gap: 20px; flex-wrap: wrap; width: 100%; justify-content: center;">
+            <div class="control-row">
                 <div class="input-group">
-                    <label for="leagueId">Sleeper League ID: <span style="color: red;">*</span></label>
-                    <input type="text" id="leagueId" placeholder="Required - Enter your League ID" required>
+                    <label for="username">Sleeper Username: <span style="color: red;">*</span></label>
+                    <input type="text" id="username" placeholder="Required - Enter your Username" required>
                 </div>
-                <div class="input-group">
-                    <label for="username">Sleeper Username:</label>
-                    <input type="text" id="username" placeholder="Optional - For roster analysis">
-                </div>
+                <button id="loadLeaguesBtn" class="btn load">Load My Leagues</button>
             </div>
-            <div style="display: flex; gap: 20px; flex-wrap: wrap; width: 100%; justify-content: center;">
+            
+            <div class="control-row main-settings">
+                <div class="input-group">
+                    <label for="leagueSelect">Select League: <span style="color: red;">*</span></label>
+                    <select id="leagueSelect" disabled>
+                        <option value="">(Load leagues first)</option>
+                    </select>
+                </div>
+                
                 <div class="input-group">
                     <label for="season">Season:</label>
                     <select id="season">
@@ -142,6 +227,7 @@
                         <option value="2023">2023</option>
                     </select>
                 </div>
+
                 <div class="input-group">
                     <label for="maxWeek">Through Week:</label>
                     <select id="maxWeek">
@@ -166,10 +252,13 @@
                     </select>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="analyzeBtn" class="btn">Analyze All 32 Teams</button>
-                <button id="waiverBtn" class="btn waiver" style="display: none;">Get Waiver Recommendations</button>
-                <button id="rosterBtn" class="btn roster" style="display: none;">Analyse Roster</button>
+            
+            <div class="control-row" style="align-items: center;">
+                <button id="analyzeBtn" class="btn" disabled>Analyze Selected League</button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="waiverBtn" class="btn waiver" style="display: none;">Get Waiver Recommendations</button>
+                    <button id="rosterBtn" class="btn roster" style="display: none;">Analyse Roster</button>
+                </div>
             </div>
         </div>
 
@@ -191,7 +280,7 @@
             </button>
         </div>
 
-        <div id="status" class="status">Enter your Sleeper League ID to analyze all 32 teams</div>
+        <div id="status" class="status">Enter your Sleeper Username and click "Load My Leagues"</div>
 
         <div id="resultsSection" class="results-section" style="display: none;">
             <div class="legend">
@@ -216,8 +305,8 @@
             <div class="summary-cards" id="summaryCards"></div>
 
             <div class="table-container">
-                <table>
-                    <thead>
+                <table id="resultsTable">
+                    <thead id="resultsTableHead">
                         <tr>
                             <th>Rank</th>
                             <th>Offensive Team</th>
@@ -236,12 +325,7 @@
                 <div class="roster-header">
                     <h2>Your IDP Lineup Analysis</h2>
                     <p>Color-coded by opponent matchup quality for next week</p>
-                    <div class="roster-toggle">
-                        <span style="color: #a0aec0; font-size: 0.9rem;">Dual-Threat View:</span>
-                        <button class="roster-toggle-btn active" onclick="toggleRosterView('best')">Best of Both</button>
-                        <button class="roster-toggle-btn" onclick="toggleRosterView('individual')">Individual Positions</button>
                     </div>
-                </div>
                 <div id="rosterContent">
                 </div>
             </div>
@@ -249,7 +333,7 @@
             <div id="waiverSection" class="waiver-section" style="display: none;">
                 <div class="waiver-header">
                     <h2>Waiver Wire Recommendations</h2>
-                    <p>Top 2 available players with favorable matchups and significant snap percentages (50%+) for next week</p>
+                    <p>Top 2 available players with favorable matchups (vs top 12 worst offenses) and significant snap percentages (50%+) for next week</p>
                 </div>
                 <div id="waiverRecommendations" class="waiver-recommendations">
                 </div>
@@ -269,9 +353,10 @@
                 this.userId = null;
                 this.userRoster = null;
                 this.rosterSettings = null;
-                this.rosterViewMode = 'best';
                 this.cachedRosterData = null;
                 this.setupEventListeners();
+                this.currentLeagueId = null; 
+                this.currentPositionFilter = 'DL';
 
                 this.results = {
                     DL: {},
@@ -306,10 +391,25 @@
             }
 
             setupEventListeners() {
+                document.getElementById('loadLeaguesBtn').addEventListener('click', () => {
+                    this.loadUserLeagues();
+                });
+                
+                document.getElementById('leagueSelect').addEventListener('change', (e) => {
+                    this.currentLeagueId = e.target.value;
+                    const analyzeBtn = document.getElementById('analyzeBtn');
+                    analyzeBtn.disabled = !this.currentLeagueId;
+                    
+                    if (this.currentLeagueId) {
+                         this.showStatus(`League selected. Click "Analyze Selected League" to begin analysis.`, 'success');
+                    } else {
+                         this.showStatus(`Please select a league.`, 'error');
+                    }
+                });
+
                 document.getElementById('analyzeBtn').addEventListener('click', () => {
-                    const leagueId = document.getElementById('leagueId').value.trim();
-                    if (!leagueId) {
-                        this.showStatus('Please enter your Sleeper League ID first.', 'error');
+                    if (!this.currentLeagueId) {
+                        this.showStatus('Please load and select a Sleeper League first.', 'error');
                         return;
                     }
                     this.analyzeDefensiveMatchups();
@@ -322,6 +422,69 @@
                 document.getElementById('rosterBtn').addEventListener('click', () => {
                     this.analyzeUserRoster();
                 });
+
+                document.body.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('schedule-toggle-btn')) {
+                        const targetId = e.target.getAttribute('data-target');
+                        const targetEl = document.getElementById(targetId);
+                        this.toggleScheduleView(targetEl, e.target);
+                    }
+                });
+            }
+            
+            async loadUserLeagues() {
+                const loadBtn = document.getElementById('loadLeaguesBtn');
+                const usernameInput = document.getElementById('username');
+                const seasonInput = document.getElementById('season');
+                const leagueSelect = document.getElementById('leagueSelect');
+                const analyzeBtn = document.getElementById('analyzeBtn');
+
+                loadBtn.disabled = true;
+                analyzeBtn.disabled = true;
+                leagueSelect.disabled = true;
+                leagueSelect.innerHTML = '<option value="">Loading...</option>';
+
+                const username = usernameInput.value.trim();
+                const season = seasonInput.value;
+
+                if (!username) {
+                    this.showStatus('Please enter a Sleeper Username.', 'error');
+                    loadBtn.disabled = false;
+                    leagueSelect.innerHTML = '<option value="">(Load leagues first)</option>';
+                    return;
+                }
+
+                try {
+                    this.showStatus(`Finding user ID for ${username}...`, 'loading');
+                    const userData = await this.fetchData(`https://api.sleeper.app/v1/user/${username}`);
+                    this.userId = userData.user_id;
+
+                    this.showStatus(`Fetching NFL leagues for ${username} in ${season} season...`, 'loading');
+                    const leagues = await this.fetchData(`https://api.sleeper.app/v1/user/${this.userId}/leagues/nfl/${season}`);
+
+                    leagueSelect.innerHTML = '<option value="">-- Select a League --</option>';
+                    
+                    if (leagues.length === 0) {
+                        this.showStatus(`No NFL leagues found for ${username} in the ${season} season.`, 'error');
+                        leagueSelect.disabled = true;
+                    } else {
+                        leagues.forEach(league => {
+                            const option = document.createElement('option');
+                            option.value = league.league_id;
+                            option.textContent = league.name;
+                            leagueSelect.appendChild(option);
+                        });
+                        leagueSelect.disabled = false;
+                        this.showStatus(`Found ${leagues.length} leagues. Please select one.`, 'success');
+                    }
+                    
+                } catch (error) {
+                    this.showStatus(`Error loading leagues: ${error.message}. Check username and season.`, 'error');
+                    leagueSelect.innerHTML = '<option value="">(Error loading leagues)</option>';
+                    leagueSelect.disabled = true;
+                } finally {
+                    loadBtn.disabled = false;
+                }
             }
 
             showStatus(message, type = 'loading') {
@@ -333,7 +496,8 @@
             async fetchData(url) {
                 const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
                 }
                 return await response.json();
             }
@@ -398,7 +562,7 @@
                     const analyzeBtn = document.getElementById('analyzeBtn');
                     analyzeBtn.disabled = true;
 
-                    const leagueId = document.getElementById('leagueId').value.trim();
+                    const leagueId = this.currentLeagueId;
                     const season = document.getElementById('season').value;
                     const maxWeek = parseInt(document.getElementById('maxWeek').value);
 
@@ -443,7 +607,7 @@
                         throw new Error(`No defensive players found. Check your league settings.`);
                     }
 
-                    this.showStatus('Analysis complete!', 'success');
+                    this.showStatus('Analysis complete! Select a position tab to view results.', 'success');
                     document.getElementById('positionTabs').style.display = 'flex';
                     document.getElementById('resultsSection').style.display = 'block';
                     document.getElementById('waiverBtn').style.display = 'block';
@@ -459,9 +623,61 @@
                     this.showStatus(error.message, 'error');
                     document.getElementById('positionTabs').style.display = 'none';
                     document.getElementById('resultsSection').style.display = 'none';
+                    document.getElementById('waiverBtn').style.display = 'none';
+                    document.getElementById('rosterBtn').style.display = 'none';
                 } finally {
                     document.getElementById('analyzeBtn').disabled = false;
                 }
+            }
+
+            analyzePlayerFutureSchedule(player, positionToRank, currentWeek) {
+                const numGames = 4;
+                const schedule = [];
+                const playerTeam = this.normalizeTeam(player.team);
+
+                let rankData = this.results[positionToRank] || {};
+                
+                for (let week = currentWeek + 2; week <= currentWeek + 1 + numGames; week++) {
+                    const weekSchedule = this.nflSchedule[week];
+                    let opponent = 'BYE';
+                    let rank = 'N/A';
+                    let colorClass = '';
+                    let positionUsed = positionToRank;
+
+                    if (weekSchedule && weekSchedule[playerTeam]) {
+                        opponent = weekSchedule[playerTeam];
+                        
+                        if (positionToRank.includes('/')) {
+                            const teams = Object.entries(this.results[positionToRank])
+                                .map(([abbr, stats]) => ({ abbr, ...stats }))
+                                .sort((a, b) => b.pointsAllowed - a.pointsAllowed);
+                            rank = teams.findIndex(t => t.abbr === opponent) + 1;
+                            positionUsed = positionToRank;
+                        } else {
+                            rankData = this.results[positionToRank];
+                            rank = Object.entries(rankData)
+                                .map(([abbr, stats]) => ({ abbr, ...stats }))
+                                .sort((a, b) => b.pointsAllowed - a.pointsAllowed)
+                                .findIndex(t => t.abbr === opponent) + 1;
+                        }
+                        
+                        if (rank && rank !== 'N/A') {
+                            if (rank <= 8) colorClass = 'rank-1-8';
+                            else if (rank <= 16) colorClass = 'rank-9-16';
+                            else if (rank <= 24) colorClass = 'rank-17-24';
+                            else if (rank <= 32) colorClass = 'rank-25-32';
+                        }
+                    }
+
+                    schedule.push({
+                        week: week,
+                        opponent: opponent,
+                        rank: rank,
+                        colorClass: colorClass,
+                        positionUsed: positionUsed
+                    });
+                }
+                return schedule;
             }
 
             async analyzeUserRoster() {
@@ -472,18 +688,18 @@
                     this.showStatus('Loading your roster...', 'loading');
 
                     const username = document.getElementById('username').value.trim();
-                    const leagueId = document.getElementById('leagueId').value.trim();
                     
                     if (!username) {
                         throw new Error('Please enter your Sleeper username.');
                     }
-
-                    const userData = await this.fetchData(`https://api.sleeper.app/v1/user/${username}`);
-                    this.userId = userData.user_id;
+                    if (!this.userId) {
+                        const userData = await this.fetchData(`https://api.sleeper.app/v1/user/${username}`);
+                        this.userId = userData.user_id;
+                    }
 
                     const userRoster = this.leagueRosters.find(r => r.owner_id === this.userId);
                     if (!userRoster) {
-                        throw new Error('Could not find your roster in this league.');
+                        throw new Error('Could not find your roster in this league. Ensure the league is loaded and your username is correct.');
                     }
                     this.userRoster = userRoster;
 
@@ -491,8 +707,8 @@
                     const nextWeek = currentWeek + 1;
                     const nextWeekSchedule = this.nflSchedule[nextWeek];
                     
-                    if (!nextWeekSchedule) {
-                        throw new Error(`No schedule found for Week ${nextWeek}`);
+                    if (!nextWeekSchedule || Object.keys(nextWeekSchedule).length === 0) {
+                        throw new Error(`No schedule found for Week ${nextWeek}. Analysis only runs up to Week ${currentWeek}.`);
                     }
 
                     const startersOrdered = userRoster.starters || [];
@@ -503,7 +719,7 @@
                     const benchAnalysis = [];
                     
                     startersOrdered.forEach((playerId, index) => {
-                        const playerData = this.analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek);
+                        const playerData = this.analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek, currentWeek);
                         if (playerData) {
                             playerData.rosterIndex = index;
                             starterAnalysis.push(playerData);
@@ -512,7 +728,7 @@
                     
                     allPlayers.forEach(playerId => {
                         if (!startersSet.has(playerId)) {
-                            const playerData = this.analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek);
+                            const playerData = this.analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek, currentWeek);
                             if (playerData) {
                                 benchAnalysis.push(playerData);
                             }
@@ -523,7 +739,7 @@
                         throw new Error('No IDP players found in your roster.');
                     }
 
-                    this.cachedRosterData = { starterAnalysis, benchAnalysis, nextWeek };
+                    this.cachedRosterData = { starterAnalysis, benchAnalysis, nextWeek, currentWeek };
                     this.displayRosterAnalysis(starterAnalysis, benchAnalysis, nextWeek);
                     document.getElementById('rosterSection').style.display = 'block';
                     this.showStatus('Roster analysis complete!', 'success');
@@ -535,7 +751,7 @@
                 }
             }
 
-            analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek) {
+            analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek, currentWeek) {
                 const player = this.players[playerId];
                 if (!player) return null;
                 
@@ -550,54 +766,60 @@
                 const dualThreatCategory = this.getDualThreatCategory(positions);
                 
                 let bestRankData, individualRankData;
+                let positionToRankForSchedule = null;
                 
                 if (dualThreatCategory) {
-                    const dualInfo = this.getBetterRankForDualThreat(opponent, dualThreatCategory);
-                    const opponentDataBest = this.results[dualInfo.bestPosition][opponent];
-                    const avgAllowedBest = opponentDataBest.gamesPlayed > 0 
-                        ? (opponentDataBest.pointsAllowed / opponentDataBest.gamesPlayed).toFixed(1) 
-                        : '0.0';
-                    
-                    bestRankData = {
-                        rank: dualInfo.bestRank,
-                        position: `${dualThreatCategory} (using ${dualInfo.bestPosition} rank)`,
-                        avgAllowed: avgAllowedBest
-                    };
-                    
                     const pos1 = positions[0];
                     const pos2 = positions[1];
+
                     const teams1 = Object.entries(this.results[pos1])
-                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
+                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed); 
                     const rank1 = teams1.findIndex(([team]) => team === opponent) + 1;
                     const opponentData1 = this.results[pos1][opponent];
-                    const avgAllowed1 = opponentData1.gamesPlayed > 0 
+                    const avgAllowed1 = opponentData1 && opponentData1.gamesPlayed > 0 
                         ? (opponentData1.pointsAllowed / opponentData1.gamesPlayed).toFixed(1) 
                         : '0.0';
                     
                     const teams2 = Object.entries(this.results[pos2])
-                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
+                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed); 
                     const rank2 = teams2.findIndex(([team]) => team === opponent) + 1;
                     const opponentData2 = this.results[pos2][opponent];
-                    const avgAllowed2 = opponentData2.gamesPlayed > 0 
+                    const avgAllowed2 = opponentData2 && opponentData2.gamesPlayed > 0 
                         ? (opponentData2.pointsAllowed / opponentData2.gamesPlayed).toFixed(1) 
                         : '0.0';
+
+                    const dualTeams = Object.entries(this.results[dualThreatCategory])
+                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed); 
+                    const dualRank = dualTeams.findIndex(([team]) => team === opponent) + 1;
+                    const opponentDataDual = this.results[dualThreatCategory][opponent];
+                    const avgAllowedDual = opponentDataDual && opponentDataDual.gamesPlayed > 0 
+                        ? (opponentDataDual.pointsAllowed / opponentDataDual.gamesPlayed).toFixed(1) 
+                        : '0.0';
+
+                    bestRankData = {
+                        rank: dualRank,
+                        position: `${dualThreatCategory}`,
+                        avgAllowed: avgAllowedDual
+                    };
+                    positionToRankForSchedule = dualThreatCategory;
                     
                     individualRankData = {
-                        rank1,
-                        rank2,
-                        pos1,
-                        pos2,
-                        avgAllowed1,
-                        avgAllowed2
+                        rank1: rank1,
+                        rank2: rank2,
+                        pos1: pos1,
+                        pos2: pos2,
+                        avgAllowed1: avgAllowed1,
+                        avgAllowed2: avgAllowed2
                     };
+
                 } else {
                     const positionToUse = positions[0];
                     const teams = Object.entries(this.results[positionToUse])
-                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
+                        .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed); 
                     const rank = teams.findIndex(([team]) => team === opponent) + 1;
                     
                     const opponentData = this.results[positionToUse][opponent];
-                    const avgAllowed = opponentData.gamesPlayed > 0 
+                    const avgAllowed = opponentData && opponentData.gamesPlayed > 0 
                         ? (opponentData.pointsAllowed / opponentData.gamesPlayed).toFixed(1) 
                         : '0.0';
                     
@@ -607,6 +829,12 @@
                         avgAllowed
                     };
                     individualRankData = null;
+                    positionToRankForSchedule = positionToUse;
+                }
+
+                let futureMatchups = [];
+                if (positionToRankForSchedule) {
+                    futureMatchups = this.analyzePlayerFutureSchedule(player, positionToRankForSchedule, currentWeek);
                 }
                 
                 return {
@@ -614,7 +842,8 @@
                     opponent,
                     bestRankData,
                     individualRankData,
-                    isDualThreat: !!dualThreatCategory
+                    isDualThreat: !!dualThreatCategory,
+                    futureMatchups: futureMatchups
                 };
             }
 
@@ -637,7 +866,7 @@
                     startersGrid.className = 'roster-grid';
                     
                     starterAnalysis.forEach((playerData) => {
-                        const playerCard = this.createPlayerCard(playerData, nextWeek);
+                        const playerCard = this.createPlayerCard(playerData, nextWeek, 'roster');
                         startersGrid.appendChild(playerCard);
                     });
                     
@@ -654,7 +883,7 @@
                     benchGrid.className = 'roster-grid';
                     
                     benchAnalysis.forEach((playerData) => {
-                        const playerCard = this.createPlayerCard(playerData, nextWeek);
+                        const playerCard = this.createPlayerCard(playerData, nextWeek, 'roster');
                         benchGrid.appendChild(playerCard);
                     });
                     
@@ -662,20 +891,24 @@
                 }
             }
 
-            createPlayerCard(playerData, nextWeek) {
-                const { player, opponent, bestRankData, individualRankData, isDualThreat } = playerData;
+            createPlayerCard(playerData, nextWeek, section) {
+                const { player, opponent, bestRankData, individualRankData, isDualThreat, futureMatchups } = playerData;
                 const playerName = `${player.first_name || ''} ${player.last_name || ''}`.trim();
+                const scheduleId = `${section}-${player.player_id}-schedule`;
                 
-                let rank, position, avgAllowed;
+                let rank, position, avgAllowed, detailedPositionInfo = '';
                 
-                if (this.rosterViewMode === 'best' || !isDualThreat) {
+                if (isDualThreat) {
                     rank = bestRankData.rank;
                     position = bestRankData.position;
                     avgAllowed = bestRankData.avgAllowed;
-                } else {
-                    rank = Math.min(individualRankData.rank1, individualRankData.rank2);
-                    position = `${individualRankData.pos1}: #${individualRankData.rank1} (${individualRankData.avgAllowed1}), ${individualRankData.pos2}: #${individualRankData.rank2} (${individualRankData.avgAllowed2})`;
-                    avgAllowed = rank === individualRankData.rank1 ? individualRankData.avgAllowed1 : individualRankData.avgAllowed2;
+
+                    detailedPositionInfo = ` (${individualRankData.pos1}: #${individualRankData.rank1}, ${individualRankData.pos2}: #${individualRankData.rank2})`;
+                }
+                else {
+                    rank = bestRankData.rank;
+                    position = bestRankData.position;
+                    avgAllowed = bestRankData.avgAllowed;
                 }
                 
                 let colorClass = '';
@@ -685,21 +918,63 @@
                 else colorClass = 'rank-25-32';
 
                 const playerCard = document.createElement('div');
-                playerCard.className = `roster-player ${colorClass}`;
+                playerCard.className = `${section}-player ${colorClass}`;
+
+                let scheduleHTML = this.createScheduleTable(futureMatchups, scheduleId);
+
                 playerCard.innerHTML = `
-                    <div class="roster-player-name">${playerName}</div>
-                    <div class="roster-player-position">${position}</div>
-                    <div class="roster-player-matchup">${player.team} vs ${opponent} (Week ${nextWeek})</div>
-                    <div class="roster-player-rank">Opponent Rank: #${rank} (Avg: ${avgAllowed} pts/game)</div>
+                    <div class="${section}-player-name">${playerName}</div>
+                    <div class="${section}-player-position">${player.position || ''} (${player.team || 'FA'}) - ${position}${detailedPositionInfo}</div>
+                    <div class="${section}-player-matchup">vs ${opponent} (Week ${nextWeek})</div>
+                    <div class="${section}-player-rank">Opponent Rank: #${rank} (Avg: ${avgAllowed} pts/game)</div>
+                    ${futureMatchups.length > 0 ? `<button class="schedule-toggle-btn" data-target="${scheduleId}">View Schedule Strength</button>` : ''}
+                    ${scheduleHTML}
                 `;
                 
                 return playerCard;
             }
 
+            createScheduleTable(futureMatchups, id) {
+                if (futureMatchups.length === 0) return '';
+                
+                let tableContent = `
+                    <div class="schedule-table-container" id="${id}">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>WK</th>
+                                    <th>Opp</th>
+                                    <th>Rank</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                futureMatchups.forEach(matchup => {
+                    const rankDisplay = matchup.rank === 'N/A' ? 'BYE' : `#${matchup.rank}`;
+                    const teamDisplay = matchup.opponent === 'BYE' ? 'BYE' : `@${matchup.opponent}`;
+
+                    tableContent += `
+                        <tr>
+                            <td>${matchup.week}</td>
+                            <td>${teamDisplay}</td>
+                            <td class="${matchup.colorClass}">${rankDisplay}</td>
+                        </tr>
+                    `;
+                });
+
+                tableContent += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                return tableContent;
+            }
+
             async loadNFLSchedule(season, maxWeek) {
                 this.nflSchedule = {};
                 
-                for (let week = 1; week <= maxWeek + 1; week++) {
+                for (let week = 1; week <= maxWeek + 5; week++) {
                     try {
                         const url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${week}&year=${season}`;
                         const data = await this.fetchData(url);
@@ -713,14 +988,17 @@
                                 const team1 = this.normalizeTeam(competitors[0].team.abbreviation);
                                 const team2 = this.normalizeTeam(competitors[1].team.abbreviation);
 
-                                this.nflSchedule[week][team1] = team2;
-                                this.nflSchedule[week][team2] = team1;
+                                if (team1 && team2) {
+                                    this.nflSchedule[week][team1] = team2;
+                                    this.nflSchedule[week][team2] = team1;
+                                }
                             }
                         });
                         
                         await new Promise(resolve => setTimeout(resolve, 200));
                         
                     } catch (error) {
+                        console.error(`Error loading NFL schedule for week ${week}:`, error);
                     }
                 }
             }
@@ -734,7 +1012,12 @@
                 
                 const positionOrder = { 'DL': 1, 'LB': 2, 'DB': 3 };
                 const sortedPositions = [...positions].sort((a, b) => positionOrder[a] - positionOrder[b]);
-                return sortedPositions.join('/');
+                
+                const dualCategory = sortedPositions.join('/');
+                if (dualCategory === 'DL/LB' || dualCategory === 'LB/DB') {
+                    return dualCategory;
+                }
+                return null;
             }
 
             initializeResults() {
@@ -904,7 +1187,6 @@
 
             getDefensivePositions(player) {
                 const fantasyPositions = player.fantasy_positions || [];
-
                 const eligiblePositions = [];
                 
                 fantasyPositions.forEach(pos => {
@@ -923,13 +1205,51 @@
                     }
                 });
                 
-                if (eligiblePositions.length === 0) {
-                    const nflPos = (player.position || '').toUpperCase().trim();
-                    if (['DE', 'DT', 'NT'].includes(nflPos)) eligiblePositions.push('DL');
-                    else if (['LB', 'OLB', 'ILB', 'MLB', 'ROLB', 'LOLB'].includes(nflPos)) eligiblePositions.push('LB');
-                    else if (['CB', 'S', 'FS', 'SS', 'DB', 'SAF', 'NB'].includes(nflPos)) eligiblePositions.push('DB');
+                const nflPos = (player.position || '').toUpperCase().trim();
+                
+                if (nflPos === 'EDGE') {
+                    if (!eligiblePositions.includes('DL')) {
+                        eligiblePositions.push('DL');
+                    }
+                    if (!eligiblePositions.includes('LB')) {
+                        eligiblePositions.push('LB');
+                    }
+                }
+                else if (nflPos === 'DE') {
+                    if (!eligiblePositions.includes('DL')) {
+                        eligiblePositions.push('DL');
+                    }
+                    if (fantasyPositions.includes('DE') && !eligiblePositions.includes('LB')) {
+                        eligiblePositions.push('LB');
+                    }
+                }
+                else if (['DT', 'NT'].includes(nflPos)) {
+                    if (!eligiblePositions.includes('DL')) {
+                        eligiblePositions.push('DL');
+                    }
+                }
+                else if (nflPos === 'OLB') {
+                    if (!eligiblePositions.includes('LB')) {
+                        eligiblePositions.push('LB');
+                    }
+                    if (!eligiblePositions.includes('DL')) {
+                        eligiblePositions.push('DL');
+                    }
+                }
+                else if (['LB', 'ILB', 'MLB', 'ROLB', 'LOLB'].includes(nflPos)) {
+                    if (!eligiblePositions.includes('LB')) {
+                        eligiblePositions.push('LB');
+                    }
+                }
+                else if (['CB', 'S', 'FS', 'SS', 'DB', 'SAF', 'NB'].includes(nflPos)) {
+                    if (!eligiblePositions.includes('DB')) {
+                        eligiblePositions.push('DB');
+                    }
                 }
                 
+                const positionOrder = { 'DL': 1, 'LB': 2, 'DB': 3 };
+                eligiblePositions.sort((a, b) => positionOrder[a] - positionOrder[b]);
+
                 return eligiblePositions;
             }
 
@@ -941,8 +1261,8 @@
                     const nextWeek = currentWeek + 1;
                     const nextWeekSchedule = this.nflSchedule[nextWeek];
                     
-                    if (!nextWeekSchedule) {
-                        throw new Error(`No schedule found for Week ${nextWeek}`);
+                    if (!nextWeekSchedule || Object.keys(nextWeekSchedule).length === 0) {
+                        throw new Error(`No schedule found for Week ${nextWeek}. Cannot provide waiver recommendations.`);
                     }
 
                     const rosteredPlayers = new Set();
@@ -953,17 +1273,18 @@
                     });
 
                     const recommendations = {};
+                    const positionsToAnalyze = ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'];
                     
-                    ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
+                    positionsToAnalyze.forEach(position => {
                         const worstOffenses = Object.entries(this.results[position])
                             .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed)
-                            .slice(0, 8)
+                            .slice(0, 12)
                             .map(entry => entry[0]);
 
-                        const favorableDefenses = [];
+                        const favorableDefenses = new Set();
                         Object.entries(nextWeekSchedule).forEach(([defenseTeam, offenseTeam]) => {
                             if (worstOffenses.includes(offenseTeam)) {
-                                favorableDefenses.push(defenseTeam);
+                                favorableDefenses.add(defenseTeam);
                             }
                         });
 
@@ -972,53 +1293,71 @@
                             if (rosteredPlayers.has(playerId)) return;
                             
                             let positionMatch = false;
+                            const playerPositions = playerData.positions;
+                            const playerDualCategory = playerData.dualThreatCategory;
+
                             if (['DL', 'LB', 'DB'].includes(position)) {
-                                positionMatch = playerData.positions.includes(position);
-                            } else {
-                                const playerDualCategory = this.getDualThreatCategory(playerData.positions);
-                                positionMatch = playerDualCategory === position;
+                                if (playerPositions.includes(position) && !playerDualCategory) {
+                                    positionMatch = true;
+                                }
+                            } else if (position === 'DL/LB') {
+                                if (playerPositions.includes('DL') && playerPositions.includes('LB')) {
+                                    positionMatch = true;
+                                }
+                            } else if (position === 'LB/DB') {
+                                if (playerPositions.includes('LB') && playerPositions.includes('DB')) {
+                                    positionMatch = true;
+                                }
                             }
                             
                             if (!positionMatch) return;
                             
                             const playerTeam = this.normalizeTeam(playerData.player.team);
-                            if (!favorableDefenses.includes(playerTeam)) return;
+                            if (!favorableDefenses.has(playerTeam)) return;
                             
-                            const hasSignificantSnaps = playerData.hasSignificantSnaps || false;
-                            if (!hasSignificantSnaps) return;
+                            if (!playerData.hasSignificantSnaps) return;
                             
-                            const opponent = nextWeekSchedule[playerTeam];
-                            const avgAllowed = this.results[position][opponent]?.pointsAllowed / this.results[position][opponent]?.gamesPlayed || 0;
+                            const analyzedMatchup = this.analyzePlayerMatchup(playerId, nextWeekSchedule, nextWeek, currentWeek);
+                            if (!analyzedMatchup) return;
+                            
+                            const opponent = analyzedMatchup.opponent;
+                            
                             const teams = Object.entries(this.results[position])
                                 .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
                             const opponentRank = teams.findIndex(([team]) => team === opponent) + 1;
                             
-                            let adjustedTotal = playerData.totalPoints;
-                            let bestGameRemoved = 0;
+                            if (opponentRank > 12) return;
                             
+                            const opponentData = this.results[position][opponent];
+                            const avgAllowed = opponentData?.pointsAllowed / opponentData?.gamesPlayed || 0;
+                            
+                            let adjustedTotal = playerData.totalPoints;
                             if (playerData.weeklyScores && playerData.weeklyScores.length > 1) {
                                 const sortedScores = [...playerData.weeklyScores].sort((a, b) => b - a);
-                                bestGameRemoved = sortedScores[0];
-                                adjustedTotal = playerData.totalPoints - bestGameRemoved;
+                                adjustedTotal = playerData.totalPoints - sortedScores[0];
                             }
                             
                             availablePlayers.push({
                                 playerId,
                                 player: playerData.player,
-                                totalPoints: playerData.totalPoints,
                                 adjustedTotal: adjustedTotal,
-                                bestGameRemoved: bestGameRemoved,
-                                gamesPlayed: playerData.weeklyScores ? playerData.weeklyScores.length : 0,
                                 team: playerTeam,
                                 opponent,
                                 avgAllowed,
                                 snapInfo: `${playerData.avgSnapPercentage.toFixed(1)}%`,
-                                opponentRank: opponentRank
+                                opponentRank: opponentRank,
+                                futureMatchups: analyzedMatchup.futureMatchups,
+                                individualRankData: analyzedMatchup.individualRankData
                             });
                         });
 
                         availablePlayers.sort((a, b) => b.adjustedTotal - a.adjustedTotal);
-                        recommendations[position] = availablePlayers.slice(0, 2);
+                        
+                        const top2 = availablePlayers.slice(0, 2);
+                        
+                        top2.sort((a, b) => a.opponentRank - b.opponentRank);
+                        
+                        recommendations[position] = top2;
                     });
 
                     this.displayWaiverRecommendations(recommendations, nextWeek);
@@ -1026,7 +1365,7 @@
                     this.showStatus('Waiver recommendations ready!', 'success');
 
                 } catch (error) {
-                    this.showStatus(`Error: ${error.message}`, 'error');
+                    this.showStatus(`Waiver Error: ${error.message}`, 'error');
                 }
             }
 
@@ -1048,10 +1387,11 @@
                     let cardContent = `<h3>${position} Recommendation</h3>`;
                     
                     if (recs.length === 0) {
-                        cardContent += '<p>No favorable matchups found</p>';
+                        cardContent += '<p style="color: #a0aec0; font-size: 0.9rem;">No high-snap single-position players with favorable matchups found</p>';
                     } else {
                         recs.forEach((rec, index) => {
                             const playerName = `${rec.player.first_name || ''} ${rec.player.last_name || ''}`.trim();
+                            const scheduleId = `waiver-${rec.playerId}-schedule`;
                             
                             let colorClass = '';
                             if (rec.opponentRank <= 8) colorClass = 'rank-1-8';
@@ -1060,13 +1400,17 @@
                             else colorClass = 'rank-25-32';
                             
                             const marginClass = index === 0 ? 'margin-bottom: 15px;' : '';
+
+                            let scheduleHTML = this.createScheduleTable(rec.futureMatchups, scheduleId);
                             
                             cardContent += `
                                 <div class="waiver-option ${colorClass}" style="${marginClass}">
-                                    <div class="player-name">${playerName}</div>
+                                    <div class="player-name">${playerName} (${rec.player.position || ''})</div>
                                     <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
                                     <div class="points">Avg Snap Share: ${rec.snapInfo}</div>
                                     <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game)</div>
+                                    ${rec.futureMatchups.length > 0 ? `<button class="schedule-toggle-btn" data-target="${scheduleId}">View Schedule Strength</button>` : ''}
+                                    ${scheduleHTML}
                                 </div>
                             `;
                         });
@@ -1087,10 +1431,11 @@
                     let cardContent = `<h3>${position} Recommendation</h3>`;
                     
                     if (recs.length === 0) {
-                        cardContent += '<p>No favorable matchups found</p>';
+                        cardContent += '<p style="color: #a0aec0; font-size: 0.9rem;">No high-snap dual-threat players with favorable matchups found</p>';
                     } else {
                         recs.forEach((rec, index) => {
                             const playerName = `${rec.player.first_name || ''} ${rec.player.last_name || ''}`.trim();
+                            const scheduleId = `waiver-${rec.playerId}-schedule`;
                             
                             let colorClass = '';
                             if (rec.opponentRank <= 8) colorClass = 'rank-1-8';
@@ -1100,12 +1445,20 @@
                             
                             const marginClass = index === 0 ? 'margin-bottom: 15px;' : '';
                             
+                            const dualRanks = rec.individualRankData;
+                            const rankInfo = `(${dualRanks.pos1}: #${dualRanks.rank1}, ${dualRanks.pos2}: #${dualRanks.rank2})`;
+                            const posDisplay = `${position} ${rankInfo}`;
+
+                            let scheduleHTML = this.createScheduleTable(rec.futureMatchups, scheduleId);
+                            
                             cardContent += `
                                 <div class="waiver-option ${colorClass}" style="${marginClass}">
-                                    <div class="player-name">${playerName}</div>
+                                    <div class="player-name">${playerName} (${rec.player.position || ''})</div>
                                     <div class="matchup">${rec.team} vs ${rec.opponent} (Week ${nextWeek})</div>
                                     <div class="points">Avg Snap Share: ${rec.snapInfo}</div>
-                                    <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game)</div>
+                                    <div class="points">Opponent Rank: #${rec.opponentRank} (${rec.avgAllowed.toFixed(1)} pts/game) ${rankInfo}</div>
+                                    ${rec.futureMatchups.length > 0 ? `<button class="schedule-toggle-btn" data-target="${scheduleId}">View Schedule Strength</button>` : ''}
+                                    ${scheduleHTML}
                                 </div>
                             `;
                         });
@@ -1125,6 +1478,7 @@
                     tab.classList.remove('active');
                     if (tab.dataset.position === position) {
                         tab.classList.add('active');
+                        this.currentPositionFilter = position;
                     }
                 });
 
@@ -1132,106 +1486,164 @@
             }
 
             displayResults(data, position) {
-                let sortedTeams;
+                const tableHead = document.getElementById('resultsTableHead');
+                const tableBody = document.getElementById('resultsTableBody');
                 
                 if (position === 'DL/LB' || position === 'LB/DB') {
                     const positions = position.split('/');
                     const pos1 = positions[0];
                     const pos2 = positions[1];
                     
-                    sortedTeams = Object.keys(this.teamMappings).map(teamAbbr => {
-                        const dualInfo = this.getBetterRankForDualThreat(teamAbbr, position);
-                        const bestPos = dualInfo.bestPosition;
-                        const teamData = this.results[bestPos][teamAbbr];
+                    tableHead.innerHTML = `
+                        <tr>
+                            <th>Rank</th>
+                            <th>Offensive Team</th>
+                            <th>Pts Allowed ${pos1}</th>
+                            <th>Pts Allowed ${pos2}</th>
+                            <th>Avg Per Game (${position})</th>
+                            <th>Games Played</th>
+                            <th>Best Game ${pos1}</th>
+                            <th>Best Game ${pos2}</th>
+                        </tr>
+                    `;
+                    
+                    const sortedTeams = Object.keys(this.teamMappings).map(teamAbbr => {
+                        const pos1Data = this.results[pos1][teamAbbr];
+                        const pos2Data = this.results[pos2][teamAbbr];
+                        const combinedData = this.results[position][teamAbbr];
                         
                         return {
                             abbr: teamAbbr,
-                            name: teamData.name,
-                            pointsAllowed: teamData.pointsAllowed,
-                            gamesPlayed: teamData.gamesPlayed,
-                            bestSingleGame: teamData.bestSingleGame,
-                            bestPosition: bestPos,
-                            pos1Rank: dualInfo.rank1,
-                            pos2Rank: dualInfo.rank2
+                            name: combinedData.name,
+                            pos1Points: pos1Data.pointsAllowed,
+                            pos2Points: pos2Data.pointsAllowed,
+                            combinedPoints: combinedData.pointsAllowed,
+                            gamesPlayed: combinedData.gamesPlayed,
+                            pos1Best: pos1Data.bestSingleGame,
+                            pos2Best: pos2Data.bestSingleGame
                         };
-                    }).sort((a, b) => b.pointsAllowed - a.pointsAllowed);
+                    }).sort((a, b) => b.combinedPoints - a.combinedPoints);
                     
-                    document.getElementById('tableHeaderText').textContent = `Points ALLOWED (Using Better of ${pos1}/${pos2})`;
+                    const totalPoints = sortedTeams.reduce((sum, team) => sum + team.combinedPoints, 0);
+                    const maxWeek = parseInt(document.getElementById('maxWeek').value);
+
+                    document.getElementById('summaryCards').innerHTML = `
+                        <div class="summary-card">
+                            <h3>Position</h3>
+                            <div class="value">${position}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Weeks Analyzed</h3>
+                            <div class="value">${maxWeek}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Points Allowed</h3>
+                            <div class="value">${totalPoints.toFixed(1)}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Teams Analyzed</h3>
+                            <div class="value">32</div>
+                        </div>
+                    `;
+
+                    tableBody.innerHTML = '';
+                    sortedTeams.forEach((team, index) => {
+                        const rank = index + 1;
+                        const avgPerGame = team.gamesPlayed > 0 ? (team.combinedPoints / team.gamesPlayed).toFixed(1) : '0.0';
+
+                        let colorClass = '';
+                        if (rank <= 8) colorClass = 'rank-1-8';
+                        else if (rank <= 16) colorClass = 'rank-9-16';
+                        else if (rank <= 24) colorClass = 'rank-17-24';
+                        else colorClass = 'rank-25-32';
+
+                        const row = document.createElement('tr');
+                        row.className = colorClass;
+                        
+                        row.innerHTML = `
+                            <td class="rank">${rank}</td>
+                            <td class="team-name">${team.abbr} - ${team.name}</td>
+                            <td class="points">${team.pos1Points.toFixed(1)}</td>
+                            <td class="points">${team.pos2Points.toFixed(1)}</td>
+                            <td class="points">${avgPerGame}</td>
+                            <td class="points">${team.gamesPlayed}</td>
+                            <td class="points">${team.pos1Best.toFixed(1)}</td>
+                            <td class="points">${team.pos2Best.toFixed(1)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
                 } else {
-                    sortedTeams = Object.entries(data)
+                    tableHead.innerHTML = `
+                        <tr>
+                            <th>Rank</th>
+                            <th>Offensive Team</th>
+                            <th>Points ALLOWED to Defense</th>
+                            <th>Avg Per Game</th>
+                            <th>Games Played</th>
+                            <th>Best Single Game (Most Allowed)</th>
+                        </tr>
+                    `;
+                    
+                    const sortedTeams = Object.entries(data)
                         .map(([abbr, stats]) => ({ abbr, ...stats }))
                         .sort((a, b) => b.pointsAllowed - a.pointsAllowed);
                     
-                    document.getElementById('tableHeaderText').textContent = 'Points ALLOWED to Defense';
-                }
+                    const totalPoints = sortedTeams.reduce((sum, team) => sum + team.pointsAllowed, 0);
+                    const maxWeek = parseInt(document.getElementById('maxWeek').value);
 
-                const totalPoints = sortedTeams.reduce((sum, team) => sum + team.pointsAllowed, 0);
-                const maxWeek = parseInt(document.getElementById('maxWeek').value);
-
-                document.getElementById('summaryCards').innerHTML = `
-                    <div class="summary-card">
-                        <h3>Position</h3>
-                        <div class="value">${position}</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Weeks Analyzed</h3>
-                        <div class="value">${maxWeek}</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Total Points Allowed</h3>
-                        <div class="value">${totalPoints.toFixed(1)}</div>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Teams Analyzed</h3>
-                        <div class="value">32</div>
-                    </div>
-                `;
-
-                const tableBody = document.getElementById('resultsTableBody');
-                tableBody.innerHTML = '';
-
-                sortedTeams.forEach((team, index) => {
-                    const rank = index + 1;
-                    const avgPerGame = team.gamesPlayed > 0 ? (team.pointsAllowed / team.gamesPlayed).toFixed(1) : '0.0';
-
-                    let colorClass = '';
-                    if (rank <= 8) colorClass = 'rank-1-8';
-                    else if (rank <= 16) colorClass = 'rank-9-16';
-                    else if (rank <= 24) colorClass = 'rank-17-24';
-                    else colorClass = 'rank-25-32';
-
-                    const row = document.createElement('tr');
-                    row.className = colorClass;
-                    
-                    let teamNameDisplay = `${team.abbr} - ${team.name}`;
-                    if (position === 'DL/LB' || position === 'LB/DB') {
-                        const positions = position.split('/');
-                        teamNameDisplay += ` (${team.bestPosition}: #${team.pos1Rank <= team.pos2Rank ? team.pos1Rank : team.pos2Rank})`;
-                    }
-                    
-                    row.innerHTML = `
-                        <td class="rank">${rank}</td>
-                        <td class="team-name">${teamNameDisplay}</td>
-                        <td class="points">${team.pointsAllowed.toFixed(1)}</td>
-                        <td class="points">${avgPerGame}</td>
-                        <td class="points">${team.gamesPlayed}</td>
-                        <td class="points">${team.bestSingleGame.toFixed(1)}</td>
+                    document.getElementById('summaryCards').innerHTML = `
+                        <div class="summary-card">
+                            <h3>Position</h3>
+                            <div class="value">${position}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Weeks Analyzed</h3>
+                            <div class="value">${maxWeek}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Points Allowed</h3>
+                            <div class="value">${totalPoints.toFixed(1)}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Teams Analyzed</h3>
+                            <div class="value">32</div>
+                        </div>
                     `;
-                    tableBody.appendChild(row);
-                });
+
+                    tableBody.innerHTML = '';
+                    sortedTeams.forEach((team, index) => {
+                        const rank = index + 1;
+                        const avgPerGame = team.gamesPlayed > 0 ? (team.pointsAllowed / team.gamesPlayed).toFixed(1) : '0.0';
+
+                        let colorClass = '';
+                        if (rank <= 8) colorClass = 'rank-1-8';
+                        else if (rank <= 16) colorClass = 'rank-9-16';
+                        else if (rank <= 24) colorClass = 'rank-17-24';
+                        else colorClass = 'rank-25-32';
+
+                        const row = document.createElement('tr');
+                        row.className = colorClass;
+                        
+                        row.innerHTML = `
+                            <td class="rank">${rank}</td>
+                            <td class="team-name">${team.abbr} - ${team.name}</td>
+                            <td class="points">${team.pointsAllowed.toFixed(1)}</td>
+                            <td class="points">${avgPerGame}</td>
+                            <td class="points">${team.gamesPlayed}</td>
+                            <td class="points">${team.bestSingleGame.toFixed(1)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
             }
 
-            toggleRosterView(mode) {
-                this.rosterViewMode = mode;
-                
-                document.querySelectorAll('.roster-toggle-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                event.target.classList.add('active');
-                
-                if (this.cachedRosterData) {
-                    const { starterAnalysis, benchAnalysis, nextWeek } = this.cachedRosterData;
-                    this.displayRosterAnalysis(starterAnalysis, benchAnalysis, nextWeek);
+            toggleScheduleView(targetEl, button) {
+                if (targetEl.style.display === 'block') {
+                    targetEl.style.display = 'none';
+                    button.textContent = 'View Schedule Strength';
+                } else {
+                    targetEl.style.display = 'block';
+                    button.textContent = 'Hide Schedule Strength';
                 }
             }
         }
@@ -1241,12 +1653,11 @@
         });
 
         function showPosition(position) {
-            window.analyzer.showPosition(position);
+            if (window.analyzer) {
+                window.analyzer.showPosition(position);
+            }
         }
-
-        function toggleRosterView(mode) {
-            window.analyzer.toggleRosterView(mode);
-        }
+        
     </script>
 </body>
 </html>
