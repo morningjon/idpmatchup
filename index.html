@@ -536,27 +536,6 @@
                 });
             }
 
-            getBetterRankForDualThreat(opponent, dualCategory) {
-                const positions = dualCategory.split('/');
-                const pos1 = positions[0];
-                const pos2 = positions[1];
-                
-                const teams1 = Object.entries(this.results[pos1])
-                    .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
-                const rank1 = teams1.findIndex(([team]) => team === opponent) + 1;
-                
-                const teams2 = Object.entries(this.results[pos2])
-                    .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
-                const rank2 = teams2.findIndex(([team]) => team === opponent) + 1;
-                
-                return {
-                    bestRank: Math.min(rank1, rank2),
-                    rank1: rank1,
-                    rank2: rank2,
-                    bestPosition: rank1 <= rank2 ? pos1 : pos2
-                };
-            }
-
             async analyzeDefensiveMatchups() {
                 try {
                     const analyzeBtn = document.getElementById('analyzeBtn');
@@ -634,31 +613,36 @@
                 const numGames = 4;
                 const schedule = [];
                 const playerTeam = this.normalizeTeam(player.team);
-
-                let rankData = this.results[positionToRank] || {};
                 
                 for (let week = currentWeek + 2; week <= currentWeek + 1 + numGames; week++) {
                     const weekSchedule = this.nflSchedule[week];
                     let opponent = 'BYE';
                     let rank = 'N/A';
                     let colorClass = '';
-                    let positionUsed = positionToRank;
 
                     if (weekSchedule && weekSchedule[playerTeam]) {
                         opponent = weekSchedule[playerTeam];
                         
                         if (positionToRank.includes('/')) {
+                            const positions = positionToRank.split('/');
+                            const pos1 = positions[0];
+                            const pos2 = positions[1];
+                            
+                            const teams = Object.keys(this.teamMappings).map(teamAbbr => {
+                                const p1Data = this.results[pos1][teamAbbr];
+                                const p2Data = this.results[pos2][teamAbbr];
+                                return {
+                                    abbr: teamAbbr,
+                                    combinedPoints: p1Data.pointsAllowed + p2Data.pointsAllowed
+                                };
+                            }).sort((a, b) => b.combinedPoints - a.combinedPoints);
+                            
+                            rank = teams.findIndex(t => t.abbr === opponent) + 1;
+                        } else {
                             const teams = Object.entries(this.results[positionToRank])
                                 .map(([abbr, stats]) => ({ abbr, ...stats }))
                                 .sort((a, b) => b.pointsAllowed - a.pointsAllowed);
                             rank = teams.findIndex(t => t.abbr === opponent) + 1;
-                            positionUsed = positionToRank;
-                        } else {
-                            rankData = this.results[positionToRank];
-                            rank = Object.entries(rankData)
-                                .map(([abbr, stats]) => ({ abbr, ...stats }))
-                                .sort((a, b) => b.pointsAllowed - a.pointsAllowed)
-                                .findIndex(t => t.abbr === opponent) + 1;
                         }
                         
                         if (rank && rank !== 'N/A') {
@@ -673,8 +657,7 @@
                         week: week,
                         opponent: opponent,
                         rank: rank,
-                        colorClass: colorClass,
-                        positionUsed: positionUsed
+                        colorClass: colorClass
                     });
                 }
                 return schedule;
@@ -1053,17 +1036,13 @@
                 const weeklyTotals = { 
                     DL: new Map(), 
                     LB: new Map(), 
-                    DB: new Map(),
-                    'DL/LB': new Map(),
-                    'LB/DB': new Map()
+                    DB: new Map()
                 };
                 
                 Object.keys(this.teamMappings).forEach(team => {
                     weeklyTotals.DL.set(team, 0);
                     weeklyTotals.LB.set(team, 0);
                     weeklyTotals.DB.set(team, 0);
-                    weeklyTotals['DL/LB'].set(team, 0);
-                    weeklyTotals['LB/DB'].set(team, 0);
                 });
 
                 let weekStats = null;
@@ -1138,23 +1117,17 @@
                         const currentTotal = weeklyTotals[position].get(offenseTeam) || 0;
                         weeklyTotals[position].set(offenseTeam, currentTotal + fantasyPoints);
                     });
-
-                    const dualThreatCategory = this.getDualThreatCategory(defensivePositions);
-                    if (dualThreatCategory && weeklyTotals[dualThreatCategory]) {
-                        const currentDualTotal = weeklyTotals[dualThreatCategory].get(offenseTeam) || 0;
-                        weeklyTotals[dualThreatCategory].set(offenseTeam, currentDualTotal + fantasyPoints);
-                    }
                 });
 
                 if (scoringCount === 0) return 0;
 
                 Object.keys(this.teamMappings).forEach(offenseTeam => {
-                    const hasPoints = ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].some(pos => 
+                    const hasPoints = ['DL', 'LB', 'DB'].some(pos => 
                         weeklyTotals[pos].get(offenseTeam) > 0
                     );
                     
                     if (hasPoints) {
-                        ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
+                        ['DL', 'LB', 'DB'].forEach(position => {
                             const weekPoints = weeklyTotals[position].get(offenseTeam) || 0;
                             
                             this.results[position][offenseTeam].pointsAllowed += weekPoints;
@@ -1166,7 +1139,7 @@
                         });
                         
                         this.results['DL'][offenseTeam].gamesPlayed++;
-                        ['LB', 'DB', 'DL/LB', 'LB/DB'].forEach(position => {
+                        ['LB', 'DB'].forEach(position => {
                             this.results[position][offenseTeam].gamesPlayed = this.results['DL'][offenseTeam].gamesPlayed;
                         });
                     }
@@ -1285,10 +1258,29 @@
                     const positionsToAnalyze = ['DL', 'LB', 'DB', 'DL/LB', 'LB/DB'];
                     
                     positionsToAnalyze.forEach(position => {
-                        const worstOffenses = Object.entries(this.results[position])
-                            .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed)
-                            .slice(0, 12)
-                            .map(entry => entry[0]);
+                        let worstOffenses;
+                        
+                        if (position === 'DL/LB' || position === 'LB/DB') {
+                            const positions = position.split('/');
+                            const pos1 = positions[0];
+                            const pos2 = positions[1];
+                            
+                            const teams = Object.keys(this.teamMappings).map(teamAbbr => {
+                                const p1Data = this.results[pos1][teamAbbr];
+                                const p2Data = this.results[pos2][teamAbbr];
+                                return {
+                                    abbr: teamAbbr,
+                                    combinedPoints: p1Data.pointsAllowed + p2Data.pointsAllowed
+                                };
+                            }).sort((a, b) => b.combinedPoints - a.combinedPoints);
+                            
+                            worstOffenses = teams.slice(0, 12).map(t => t.abbr);
+                        } else {
+                            worstOffenses = Object.entries(this.results[position])
+                                .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed)
+                                .slice(0, 12)
+                                .map(entry => entry[0]);
+                        }
 
                         const favorableDefenses = new Set();
                         Object.entries(nextWeekSchedule).forEach(([defenseTeam, offenseTeam]) => {
@@ -1331,14 +1323,35 @@
                             
                             const opponent = analyzedMatchup.opponent;
                             
-                            const teams = Object.entries(this.results[position])
-                                .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
-                            const opponentRank = teams.findIndex(([team]) => team === opponent) + 1;
+                            let opponentRank, avgAllowed;
+                            
+                            if (position === 'DL/LB' || position === 'LB/DB') {
+                                const positions = position.split('/');
+                                const pos1 = positions[0];
+                                const pos2 = positions[1];
+                                
+                                const teams = Object.keys(this.teamMappings).map(teamAbbr => {
+                                    const p1Data = this.results[pos1][teamAbbr];
+                                    const p2Data = this.results[pos2][teamAbbr];
+                                    return {
+                                        abbr: teamAbbr,
+                                        combinedPoints: p1Data.pointsAllowed + p2Data.pointsAllowed,
+                                        gamesPlayed: p1Data.gamesPlayed
+                                    };
+                                }).sort((a, b) => b.combinedPoints - a.combinedPoints);
+                                
+                                opponentRank = teams.findIndex(t => t.abbr === opponent) + 1;
+                                const opponentTeam = teams.find(t => t.abbr === opponent);
+                                avgAllowed = opponentTeam?.gamesPlayed > 0 ? opponentTeam.combinedPoints / opponentTeam.gamesPlayed : 0;
+                            } else {
+                                const teams = Object.entries(this.results[position])
+                                    .sort((a, b) => b[1].pointsAllowed - a[1].pointsAllowed);
+                                opponentRank = teams.findIndex(([team]) => team === opponent) + 1;
+                                const opponentData = this.results[position][opponent];
+                                avgAllowed = opponentData?.pointsAllowed / opponentData?.gamesPlayed || 0;
+                            }
                             
                             if (opponentRank > 12) return;
-                            
-                            const opponentData = this.results[position][opponent];
-                            const avgAllowed = opponentData?.pointsAllowed / opponentData?.gamesPlayed || 0;
                             
                             let adjustedTotal = playerData.totalPoints;
                             if (playerData.weeklyScores && playerData.weeklyScores.length > 1) {
@@ -1456,7 +1469,6 @@
                             
                             const dualRanks = rec.individualRankData;
                             const rankInfo = `(${dualRanks.pos1}: #${dualRanks.rank1}, ${dualRanks.pos2}: #${dualRanks.rank2})`;
-                            const posDisplay = `${position} ${rankInfo}`;
 
                             let scheduleHTML = this.createScheduleTable(rec.futureMatchups, scheduleId);
                             
@@ -1517,7 +1529,6 @@
                         </tr>
                     `;
                     
-                    // First, get the sorted rankings for each individual position
                     const pos1Sorted = Object.entries(this.results[pos1])
                         .map(([abbr, stats]) => ({ abbr, points: stats.pointsAllowed }))
                         .sort((a, b) => b.points - a.points);
@@ -1526,7 +1537,6 @@
                         .map(([abbr, stats]) => ({ abbr, points: stats.pointsAllowed }))
                         .sort((a, b) => b.points - a.points);
                     
-                    // Create rank maps for quick lookup
                     const pos1Ranks = {};
                     const pos2Ranks = {};
                     pos1Sorted.forEach((team, index) => { pos1Ranks[team.abbr] = index + 1; });
@@ -1539,11 +1549,11 @@
                         
                         return {
                             abbr: teamAbbr,
-                            name: combinedData.name,
+                            name: combinedData.name || this.teamMappings[teamAbbr],
                             pos1Points: pos1Data.pointsAllowed,
                             pos2Points: pos2Data.pointsAllowed,
                             combinedPoints: pos1Data.pointsAllowed + pos2Data.pointsAllowed,
-                            gamesPlayed: combinedData.gamesPlayed,
+                            gamesPlayed: pos1Data.gamesPlayed,
                             pos1Best: pos1Data.bestSingleGame,
                             pos2Best: pos2Data.bestSingleGame,
                             pos1Rank: pos1Ranks[teamAbbr],
